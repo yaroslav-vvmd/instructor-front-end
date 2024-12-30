@@ -101,14 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const listItems = lastChild.getElementsByTagName('li');
                 const lastListItem = listItems[listItems.length - 1];
                 if (lastListItem) {
-                    lastListItem.innerHTML += `< span id = "dots" >...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
+                    lastListItem.innerHTML += `<span id="dots">...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
                 }
             } else {
-                lastChild.innerHTML += `< span id = "dots" >...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
+                lastChild.innerHTML += `<span id="dots">...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
             }
         } else if (lastChild.nodeType === Node.TEXT_NODE) {
             const wrapper = document.createElement('span');
-            wrapper.innerHTML = lastChild.textContent + `< span id = "dots" >...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
+            wrapper.innerHTML = lastChild.textContent + `<span id="dots">...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
             div.replaceChild(wrapper, lastChild);
         }
 
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         readMoreBtn.addEventListener("click", () => {
             if (!isExpanded) {
-                instructorText.innerHTML = originalText + `< span class="instructor_read-more" id = "readMoreBtn" style = "margin-left: 0;" > Показати менше</span > `;
+                instructorText.innerHTML = originalText + `<span id="readMoreBtn" class="instructor_read-more" style="margin-left: 0;"> Показати менше</span>`;
                 isExpanded = true;
             } else {
                 instructorText.innerHTML = finalTruncatedText;
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newReadMoreBtn = document.getElementById("readMoreBtn");
             newReadMoreBtn.addEventListener("click", () => {
                 if (!isExpanded) {
-                    instructorText.innerHTML = originalText + `< span id = "readMoreBtn" class="instructor_read-more" style = "margin-left: 0;" > Показати менше</span > `;
+                    instructorText.innerHTML = originalText + `<span id="readMoreBtn" class="instructor_read-more" style="margin-left: 0;"> Показати менше</span>`;
                     isExpanded = true;
                 } else {
                     instructorText.innerHTML = finalTruncatedText;
