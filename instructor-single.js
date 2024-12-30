@@ -67,7 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     charCount += node.nodeValue.length;
                 }
             } else if (node.nodeType === Node.ELEMENT_NODE) {
-                truncatedHTML += `<${node.nodeName.toLowerCase()}`;
+                const tagName = node.nodeName.toLowerCase();
+
+                truncatedHTML += `<${tagName}`;
                 for (let attr of node.attributes) {
                     truncatedHTML += ` ${attr.name}="${attr.value}"`;
                 }
@@ -78,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (charCount >= limit) break;
                 }
 
-                truncatedHTML += `</${node.nodeName.toLowerCase()}> `;
+                truncatedHTML += `</${tagName}>`;
             }
         }
 
@@ -94,29 +96,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const div = document.createElement('div');
         div.innerHTML = truncatedText;
 
-        const lastChild = div.lastChild;
+        let lastElement = div.lastChild;
 
-        if (lastChild.nodeType === Node.ELEMENT_NODE) {
-            if (lastChild.nodeName.toLowerCase() === 'ul' || lastChild.nodeName.toLowerCase() === 'ol') {
-                const listItems = lastChild.getElementsByTagName('li');
-                const lastListItem = listItems[listItems.length - 1];
+        if (lastElement && lastElement.nodeType === Node.ELEMENT_NODE) {
+            const tagName = lastElement.nodeName.toLowerCase();
+
+            if (tagName === 'ul' || tagName === 'ol') {
+                let lastListItem = lastElement.lastElementChild;
                 if (lastListItem) {
-                    lastListItem.innerHTML += `<span id="dots">...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
+                    lastListItem.innerHTML += `<span id="dots">...</span><span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
                 }
             } else {
-                lastChild.innerHTML += `<span id="dots">...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
+                lastElement.innerHTML += `<span id="dots">...</span><span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
             }
-        } else if (lastChild.nodeType === Node.TEXT_NODE) {
+        } else if (lastElement.nodeType === Node.TEXT_NODE) {
             const wrapper = document.createElement('span');
-            wrapper.innerHTML = lastChild.textContent + `<span id="dots">...</span > <span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
-            div.replaceChild(wrapper, lastChild);
+            wrapper.innerHTML = lastElement.textContent + `<span id="dots">...</span><span id="readMoreBtn" class="instructor_read-more">Показати більше</span>`;
+            div.replaceChild(wrapper, lastElement);
         }
 
         return div.innerHTML;
     }
 
     const truncatedText = truncateHTML(originalText, limit);
-    const textLength = (originalText.replace(/<[^>]+>/g, '')).length; // Strip HTML tags and calculate length
+    const textLength = (originalText.replace(/<[^>]+>/g, '')).length;
 
     if (textLength > limit) {
         const finalTruncatedText = appendReadMoreButton(truncatedText);
@@ -127,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         readMoreBtn.addEventListener("click", () => {
             if (!isExpanded) {
-                instructorText.innerHTML = originalText + `<span id="readMoreBtn" class="instructor_read-more" style="margin-left: 0;"> Показати менше</span>`;
+                instructorText.innerHTML = originalText + `<span class="instructor_read-more" id="readMoreBtn" style="margin-left: 0;">Показати менше</span>`;
                 isExpanded = true;
             } else {
                 instructorText.innerHTML = finalTruncatedText;
@@ -140,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newReadMoreBtn = document.getElementById("readMoreBtn");
             newReadMoreBtn.addEventListener("click", () => {
                 if (!isExpanded) {
-                    instructorText.innerHTML = originalText + `<span id="readMoreBtn" class="instructor_read-more" style="margin-left: 0;"> Показати менше</span>`;
+                    instructorText.innerHTML = originalText + `<span id="readMoreBtn" class="instructor_read-more" style="margin-left: 0;">Показати менше</span>`;
                     isExpanded = true;
                 } else {
                     instructorText.innerHTML = finalTruncatedText;
@@ -150,10 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     } else {
-        instructorText.innerHTML = originalText; // Show original text without "Read More" button if it doesn't require truncation
+        instructorText.innerHTML = originalText;
     }
 });
-
 document.addEventListener('DOMContentLoaded', () => {
     const slug = document.body.getAttribute('data-slug');
     const type = 'instructors';
