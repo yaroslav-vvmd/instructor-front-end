@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     form.addEventListener('submit', (event) => {
                         event.preventDefault();
                         event.stopPropagation();
-                        modal.classList.remove("visible");
+                        document.querySelector("#testimonial-modal").classList.remove("visible");
 
                         const userId = localStorage.getItem('uid');
 
