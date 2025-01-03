@@ -184,10 +184,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         event.stopPropagation();
                         modal.classList.remove("visible");
 
-                        const userId = sessionStorage.getItem('uid');
+                        const userId = localStorage.getItem('uid');
 
-                        const userData = sessionStorage.getItem('userData')
-                            ? JSON.parse(sessionStorage.getItem('userData'))
+                        const userData = localStorage.getItem('userData')
+                            ? JSON.parse(localStorage.getItem('userData'))
                             : null;
 
                         const firstName = userData.firstName;
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!testimonials.length) return;
                 currentIndex = 0;
 
-                const userId = sessionStorage.getItem('uid');
+                const userId = localStorage.getItem('uid');
 
                 // Select elements
                 const testimonialsAmount = document.querySelector('.testimonials_amount');
@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateTestimonials() {
         const testimonialsContainer = document.querySelector('.testimonials_list-inner');
 
-        const userId = sessionStorage.getItem('uid');
+        const userId = localStorage.getItem('uid');
 
         let visibleTestimonials;
 
@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function likeTestimonial(testimonialId, reviewerId) {
-        const userId = sessionStorage.getItem('uid');
+        const userId = localStorage.getItem('uid');
         if (!userId) {
             openModal(login_modal);
             return;
@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function dislikeTestimonial(testimonialId, reviewerId) {
-        const userId = sessionStorage.getItem('uid');
+        const userId = localStorage.getItem('uid');
         if (!userId) {
             openModal(login_modal);
             return;
@@ -762,7 +762,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (modal_btn) {
         modal_btn.addEventListener("click", function (e) {
-            const userData = sessionStorage.getItem("userData");
+            const userData = localStorage.getItem("userData");
             if (userData) {
                 openModal(modal);
             } else {
@@ -773,7 +773,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (modal_btn_mobile) {
         modal_btn_mobile.addEventListener("click", function (e) {
-            const userData = sessionStorage.getItem("userData");
+            const userData = localStorage.getItem("userData");
             if (userData) {
                 openModal(modal);
             } else {
