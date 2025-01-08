@@ -1134,7 +1134,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 const data = await response.json();
                 const countElement = item.querySelector(".services-item_count");
-                countElement.textContent = `Записались ${data.subscribers} разів`;
+                const subscriptions = data.subscribers || 0;
+                countElement.textContent = `Записались ${subscriptions} разів`;
             } catch (error) {
                 console.error("Error updating subscription counts:", error);
             }
