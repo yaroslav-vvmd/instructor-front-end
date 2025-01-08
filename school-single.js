@@ -1113,3 +1113,73 @@ document.addEventListener("DOMContentLoaded", function () {
         textarea.scrollTop = textarea.scrollHeight;
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Select all instructor services items
+    const serviceItems = document.querySelectorAll(".instructor_services-item");
+    const registerModal = document.getElementById("register-modal");
+    const registrationForm = document.getElementById("registration-form");
+
+    // Function to fetch and set the subscription count for each service item
+    const updateSubscriptionCounts = () => {
+        serviceItems.forEach(async (item) => {
+            const slug = item.getAttribute("data-slug");
+            try {
+                const response = await fetch(`/services/${slug}/subscribers`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                });
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch subscriptions for ${slug}`);
+                }
+                const data = await response.json();
+                const countElement = item.querySelector(".services-item_count");
+                countElement.textContent = `Записались ${data.subscribers} разів`;
+            } catch (error) {
+                console.error("Error updating subscription counts:", error);
+            }
+        });
+    };
+
+    // Event listener for CTA click
+    serviceItems.forEach((item) => {
+        const cta = item.querySelector(".services-item_cta");
+        cta.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            // Open modal
+            registerModal.classList.add("visible");
+
+            // Store the slug in the form's data attribute
+            const slug = item.getAttribute("data-slug");
+            registrationForm.setAttribute("data-slug", slug);
+        });
+    });
+
+    // Event listener for form submission
+    registrationForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const slug = registrationForm.getAttribute("data-slug");
+        try {
+            const response = await fetch(`/services/${slug}/subscribers`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to increment subscribers for ${slug}`);
+            }
+            alert("Subscription successful!");
+            registerModal.classList.remove("visible");
+
+            // Update subscription counts
+            updateSubscriptionCounts();
+        } catch (error) {
+            console.error("Error incrementing subscribers:", error);
+            alert("Failed to subscribe. Please try again.");
+        }
+    });
+
+    // Initial fetch to update subscription counts on page load
+    updateSubscriptionCounts();
+});
