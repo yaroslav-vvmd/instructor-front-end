@@ -1125,7 +1125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         serviceItems.forEach(async (item) => {
             const slug = item.getAttribute("data-slug");
             try {
-                const response = await fetch(`/services/${slug}/subscribers`, {
+                const response = await fetch(`https://instructor-backend.vercel.app/services/${slug}/subscribers`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
@@ -1163,7 +1163,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const slug = registrationForm.getAttribute("data-slug");
         try {
-            const response = await fetch(`/services/${slug}/subscribers`, {
+            const response = await fetch(`https://instructor-backend.vercel.app/services/${slug}/subscribers`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
             });
