@@ -922,12 +922,14 @@ document.addEventListener("DOMContentLoaded", () => {
         modalToOpen.classList.toggle("visible");
     }
 
+    const nameField = document.getElementById("Name-Register");
+    const emailField = document.getElementById("Email-Register");
+    const phoneField = document.getElementById("Tel-Register");
+    const commentField = document.getElementById("Comment-Register");
+
     const userData = JSON.parse(localStorage.getItem("userData") || "{}");
 
     if (userData) {
-        const nameField = document.getElementById("Name-Register");
-        const emailField = document.getElementById("Email-Register");
-        const phoneField = document.getElementById("Tel-Register");
         if (userData.firstName) nameField.value = userData.firstName + ' ' + userData.lastName;
         if (userData.email) emailField.value = userData.email;
         phoneField.value = localStorage.getItem("uid") || "";
@@ -939,15 +941,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const registrationTitle = document.querySelector('.registration-modal_title');
     const registerClose = document.querySelector('.registration-modal_close');
     const registerOverlay = document.querySelector('.registration-modal_overlay');
-
-    registerClose.addEventListener('click', ()=>{
+    const registerSuccess = document.querySelector('.modal-request_success');
+   
+    registerClose.addEventListener('click', () => {
         registerModal.classList.remove('visible');
+        registerSuccess.style.dispaly = "none";
+        registrationForm.style.display = "block";
+        commentField.value = '';
     })
 
-    registerOverlay.addEventListener('click', ()=>{
+    registerOverlay.addEventListener('click', () => {
         registerModal.classList.remove('visible');
+        registerSuccess.style.dispaly = "none";
+        registrationForm.style.display = "block";
+        commentField.value = '';
     })
-    
+
     // Function to fetch and set the subscription count for each service item 
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {
