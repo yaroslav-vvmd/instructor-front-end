@@ -1118,6 +1118,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", () => {
     const login_modal = document.querySelector("#login-modal-2");
+    const login_modal_overlay = login_modal.querySelector(".login-modal-overlay");
+
+    login_modal_overlay.ddEventListener('click', () => {
+        login_modal.classList.remove('visible');
+    });
 
     function openModal(modalToOpen) {
         modalToOpen.classList.toggle("visible");
@@ -1164,6 +1169,7 @@ document.addEventListener("DOMContentLoaded", () => {
         registrationForm.style.display = "block";
         commentField.value = '';
     });
+
 
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {

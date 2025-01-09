@@ -919,6 +919,12 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener("DOMContentLoaded", () => {
     const login_modal = document.querySelector("#login-modal-2");
 
+    const login_modal_overlay = login_modal.querySelector(".login-modal-overlay");
+
+    login_modal_overlay.ddEventListener('click', () => {
+        login_modal.classList.remove('visible');
+    });
+
     function openModal(modalToOpen) {
         modalToOpen.classList.toggle("visible");
     }
@@ -950,7 +956,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerClose = document.querySelector('.registration-modal_close');
     const registerOverlay = document.querySelector('.registration-modal_overlay');
     const registerSuccess = document.querySelector('.modal-request_success');
-   
+
     registerClose.addEventListener('click', () => {
         registerModal.classList.remove('visible');
         registerSuccess.style.display = "none";
