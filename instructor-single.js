@@ -933,15 +933,16 @@ document.addEventListener("DOMContentLoaded", () => {
         phoneField.value = localStorage.getItem("uid") || "";
     }
 
-    // Select all instructor services items 
     const serviceItems = document.querySelectorAll(".instructor_services-item");
     const registerModal = document.getElementById("registration-modal");
     const registrationForm = document.getElementById("registration-form");
+    const registrationTitle = document.querySelector('.registration-modal_title');
 
     // Function to fetch and set the subscription count for each service item 
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {
             const slug = item.getAttribute("data-slug");
+            const name = item.querySelector('.services-item_title').textContent;
             try {
                 const response = await fetch(
                     `https://instructor-backend.vercel.app/services/${slug}/subscribers`,
@@ -994,7 +995,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 openModal(login_modal);
                 return;
             }
-
+            registrationTitle.textContent = `Запис на ${name}`
             registerModal.classList.add("visible");
 
             // Store the slug in the form's data attribute 
