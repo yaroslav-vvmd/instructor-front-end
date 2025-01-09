@@ -915,71 +915,101 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-
-document.addEventListener("DOMContentLoaded", () => {
-    // Select all instructor services items
-    const serviceItems = document.querySelectorAll(".instructor_services-item");
-    const registerModal = document.getElementById("register-modal");
-    const registrationForm = document.getElementById("registration-form");
-
-    // Function to fetch and set the subscription count for each service item
-    const updateSubscriptionCounts = () => {
-        serviceItems.forEach(async (item) => {
-            const slug = item.getAttribute("data-slug");
-            try {
-                const response = await fetch(`https://instructor-backend.vercel.app/services/${slug}/subscribers`, {
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" },
-                });
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch subscriptions for ${slug}`);
-                }
-                const data = await response.json();
-                const countElement = item.querySelector(".services-item_count");
-                const subscriptions = data.subscribers || 0;
-                countElement.textContent = `Записались ${subscriptions} разів`;
-            } catch (error) {
-                console.error("Error updating subscription counts:", error);
-            }
-        });
-    };
-
-    // Event listener for CTA click
-    serviceItems.forEach((item) => {
-        const cta = item.querySelector(".services-item_cta");
-        cta.addEventListener("click", (event) => {
-            event.preventDefault();
-
-            // Open modal
-            registerModal.classList.add("visible");
-
-            // Store the slug in the form's data attribute
-            const slug = item.getAttribute("data-slug");
-            registrationForm.setAttribute("data-slug", slug);
-        });
-    });
-
-    // Event listener for form submission
-    registrationForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const slug = registrationForm.getAttribute("data-slug");
-        try {
-            const response = await fetch(`https://instructor-backend.vercel.app/services/${slug}/subscribers`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-            });
-            if (!response.ok) {
-                throw new Error(`Failed to increment subscribers for ${slug}`);
-            }
-
-            // Update subscription counts
-            updateSubscriptionCounts();
-        } catch (error) {
-            console.error("Error incrementing subscribers:", error);
-        }
-    });
-
-    // Initial fetch to update subscription counts on page load
-    updateSubscriptionCounts();
-});
+document.addEventListener("DOMContentLoaded", () => { 
+    // Select all instructor services items 
+    const serviceItems = document.querySelectorAll(".instructor_services-item"); 
+    const registerModal = document.getElementById("register-modal"); 
+    const registrationForm = document.getElementById("registration-form"); 
+   
+    // Function to fetch and set the subscription count for each service item 
+    const updateSubscriptionCounts = () => { 
+      serviceItems.forEach(async (item) => { 
+        const slug = item.getAttribute("data-slug"); 
+        try { 
+          const response = await fetch( 
+            `https://instructor-backend.vercel.app/services/${slug}/subscribers`, 
+            { 
+              method: "GET", 
+              headers: { "Content-Type": "application/json" }, 
+            } 
+          ); 
+          if (!response.ok) { 
+            throw new Error(`Failed to fetch subscriptions for ${slug}`); 
+          } 
+          const data = await response.json(); 
+          const countElement = item.querySelector(".services-item_count"); 
+          const subscriptions = data.subscribers || 0; 
+   
+          function getDeclension(number) { 
+            const lastDigit = number % 10; 
+            const lastTwoDigits = number % 100; 
+   
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) { 
+              return "разів"; 
+            } 
+   
+            if (lastDigit === 1) { 
+              return "раз"; 
+            } else if (lastDigit >= 2 && lastDigit <= 4) { 
+              return "рази"; 
+            } else { 
+              return "разів"; 
+            } 
+          } 
+   
+          countElement.textContent = `Записались ${subscriptions} ${getDeclension( 
+            subscriptions 
+          )}`; 
+        } catch (error) { 
+          console.error("Error updating subscription counts:", error); 
+        } 
+      }); 
+    }; 
+   
+    // Event listener for CTA click 
+    serviceItems.forEach((item) => { 
+      const cta = item.querySelector(".services-item_cta"); 
+      cta.addEventListener("click", (event) => { 
+        event.preventDefault(); 
+   
+        const userId = localStorage.getItem("uid"); 
+        if (!userId) { 
+          openModal(login_modal); 
+          return; 
+        } 
+         
+        registerModal.classList.add("visible"); 
+   
+        // Store the slug in the form's data attribute 
+        const slug = item.getAttribute("data-slug"); 
+        registrationForm.setAttribute("data-slug", slug); 
+      }); 
+    }); 
+   
+    // Event listener for form submission 
+    registrationForm.addEventListener("submit", async (event) => { 
+      event.preventDefault(); 
+   
+      const slug = registrationForm.getAttribute("data-slug"); 
+      try { 
+        const response = await fetch( 
+          `https://instructor-backend.vercel.app/services/${slug}/subscribers`, 
+          { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" }, 
+          } 
+        ); 
+        if (!response.ok) { 
+          throw new Error(`Failed to increment subscribers for ${slug}`); 
+        } 
+   
+        // Update subscription counts 
+        updateSubscriptionCounts(); 
+      } catch (error) { 
+        console.error("Error incrementing subscribers:", error); 
+      } 
+    }); 
+   
+    // Initial fetch to update subscription counts on page load 
+    updateSubscriptionCounts(); 
+  });
