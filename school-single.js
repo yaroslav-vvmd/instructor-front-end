@@ -1132,16 +1132,25 @@ document.addEventListener("DOMContentLoaded", () => {
         phoneField.value = localStorage.getItem("uid") || "";
     }
 
-    const serviceItems = document.querySelectorAll(".instructor_services-item");
-    const registerModal = document.getElementById("registration-modal");
-    const registrationForm = document.getElementById("registration-form");
+    const serviceItems = document.querySelectorAll('.instructor_services-item');
+    const registerModal = document.getElementById('registration-modal');
+    const registrationForm = document.getElementById('registration-form');
     const registrationTitle = document.querySelector('.registration-modal_title');
+    const registerClose = document.querySelector('.register-form-close');
+    const registerOverlay = document.querySelector('.registration-modal-overlay');
 
+    registerClose.addEventListener('click', ()=>{
+        registerModal.classList.remove('visible');
+    })
+
+    registerOverlay.addEventListener('click', ()=>{
+        registerModal.classList.remove('visible');
+    })
+    
     // Function to fetch and set the subscription count for each service item 
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {
             const slug = item.getAttribute("data-slug");
-            const name = item.querySelector('.services-item_title').textContent;
             try {
                 const response = await fetch(
                     `https://instructor-backend.vercel.app/services/${slug}/subscribers`,
@@ -1186,6 +1195,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Event listener for CTA click 
     serviceItems.forEach((item) => {
         const cta = item.querySelector(".services-item_cta");
+        const name = item.querySelector('.services-item_title').textContent;
+        
         cta.addEventListener("click", (event) => {
             event.preventDefault();
 

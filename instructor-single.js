@@ -933,11 +933,21 @@ document.addEventListener("DOMContentLoaded", () => {
         phoneField.value = localStorage.getItem("uid") || "";
     }
 
-    const serviceItems = document.querySelectorAll(".instructor_services-item");
-    const registerModal = document.getElementById("registration-modal");
-    const registrationForm = document.getElementById("registration-form");
+    const serviceItems = document.querySelectorAll('.instructor_services-item');
+    const registerModal = document.getElementById('registration-modal');
+    const registrationForm = document.getElementById('registration-form');
     const registrationTitle = document.querySelector('.registration-modal_title');
+    const registerClose = document.querySelector('.register-form-close');
+    const registerOverlay = document.querySelector('.registration-modal-overlay');
 
+    registerClose.addEventListener('click', ()=>{
+        registerModal.classList.remove('visible');
+    })
+
+    registerOverlay.addEventListener('click', ()=>{
+        registerModal.classList.remove('visible');
+    })
+    
     // Function to fetch and set the subscription count for each service item 
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {
