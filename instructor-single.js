@@ -916,6 +916,10 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener("DOMContentLoaded", () => { 
+    function openModal(modalToOpen) {
+        modalToOpen.classList.toggle("visible");
+    }
+    
     // Select all instructor services items 
     const serviceItems = document.querySelectorAll(".instructor_services-item"); 
     const registerModal = document.getElementById("register-modal"); 
