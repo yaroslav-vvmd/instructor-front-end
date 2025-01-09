@@ -937,7 +937,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerModal = document.getElementById('registration-modal');
     const registrationForm = document.getElementById('registration-form');
     const registrationTitle = document.querySelector('.registration-modal_title');
-    const registerClose = document.querySelector('.register-modal-close');
+    const registerClose = document.querySelector('.registration-modal-close');
     const registerOverlay = document.querySelector('.registration-modal-overlay');
 
     registerClose.addEventListener('click', ()=>{
