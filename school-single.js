@@ -853,6 +853,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+
 document.addEventListener('DOMContentLoaded', function () {
     const serviceItems = document.querySelectorAll('.instructor_services-item');
     const loadMoreBtn = document.querySelector('.services_load-more');
@@ -1126,6 +1127,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const phoneField = document.getElementById("Tel-Register");
     const commentField = document.getElementById("Comment-Register");
 
+    const charCount = document.getElementById('charCount2');
+
+    commentField.addEventListener('input', () => {
+        const currentLength = commentField.value.length;
+        charCount.textContent = `${currentLength}/520`;
+    });
+
     const userData = JSON.parse(localStorage.getItem("userData") || "{}");
 
     if (userData) {
@@ -1156,7 +1164,6 @@ document.addEventListener("DOMContentLoaded", () => {
         commentField.value = '';
     })
 
-    // Function to fetch and set the subscription count for each service item 
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {
             const slug = item.getAttribute("data-slug");
