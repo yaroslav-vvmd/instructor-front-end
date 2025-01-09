@@ -924,7 +924,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Select all instructor services items 
     const serviceItems = document.querySelectorAll(".instructor_services-item"); 
-    const registerModal = document.getElementById("register-modal"); 
+    const registerModal = document.getElementById("registration-modal"); 
     const registrationForm = document.getElementById("registration-form"); 
    
     // Function to fetch and set the subscription count for each service item 

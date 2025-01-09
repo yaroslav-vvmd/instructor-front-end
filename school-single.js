@@ -1120,9 +1120,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function openModal(modalToOpen) {
         modalToOpen.classList.toggle("visible");
     }
-    
+
     const serviceItems = document.querySelectorAll(".instructor_services-item"); 
-    const registerModal = document.getElementById("register-modal"); 
+    const registerModal = document.getElementById("registration-modal"); 
     const registrationForm = document.getElementById("registration-form"); 
    
     // Function to fetch and set the subscription count for each service item 
