@@ -1115,10 +1115,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", () => { 
+    const login_modal = document.querySelector("#login-modal");
+
     function openModal(modalToOpen) {
         modalToOpen.classList.toggle("visible");
     }
-
+    
     const serviceItems = document.querySelectorAll(".instructor_services-item"); 
     const registerModal = document.getElementById("register-modal"); 
     const registrationForm = document.getElementById("registration-form"); 

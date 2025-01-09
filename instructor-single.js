@@ -916,10 +916,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener("DOMContentLoaded", () => { 
+    const login_modal = document.querySelector("#login-modal");
+
     function openModal(modalToOpen) {
         modalToOpen.classList.toggle("visible");
     }
-    
+
     // Select all instructor services items 
     const serviceItems = document.querySelectorAll(".instructor_services-item"); 
     const registerModal = document.getElementById("register-modal"); 
