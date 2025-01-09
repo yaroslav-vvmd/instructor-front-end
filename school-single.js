@@ -1156,14 +1156,14 @@ document.addEventListener("DOMContentLoaded", () => {
         registerSuccess.style.display = "none";
         registrationForm.style.display = "block";
         commentField.value = '';
-    })
+    });
 
     registerOverlay.addEventListener('click', () => {
         registerModal.classList.remove('visible');
         registerSuccess.style.display = "none";
         registrationForm.style.display = "block";
         commentField.value = '';
-    })
+    });
 
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {
@@ -1200,9 +1200,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
-                countElement.textContent = `Записались ${subscriptions} ${getDeclension(
-                    subscriptions
-                )}`;
+                countElement.textContent = `Записались ${subscriptions} ${getDeclension(subscriptions)}`;
             } catch (error) {
                 console.error("Error updating subscription counts:", error);
             }
@@ -1222,7 +1220,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 openModal(login_modal);
                 return;
             }
-            registrationTitle.textContent = `Запис на "${name}"`
+            registrationTitle.textContent = `Запис на "${name}"`;
             registerModal.classList.add("visible");
 
             // Store the slug in the form's data attribute 
@@ -1236,6 +1234,13 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
 
         const slug = registrationForm.getAttribute("data-slug");
+        const subscribedServices = JSON.parse(sessionStorage.getItem("subscribedServices") || "[]");
+
+        if (subscribedServices.includes(slug)) {
+            console.log(`User already subscribed to ${slug} during this session.`);
+            return;
+        }
+
         try {
             const response = await fetch(
                 `https://instructor-backend.vercel.app/services/${slug}/subscribers`,
@@ -1250,6 +1255,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Update subscription counts 
             updateSubscriptionCounts();
+
+            // Store the slug in sessionStorage to mark as subscribed
+            subscribedServices.push(slug);
+            sessionStorage.setItem("subscribedServices", JSON.stringify(subscribedServices));
         } catch (error) {
             console.error("Error incrementing subscribers:", error);
         }
