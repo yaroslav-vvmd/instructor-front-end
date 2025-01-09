@@ -225,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             .then(response => response.json())
                             .then(data => {
                                 if (data.message) {
+                                    form.reset();
                                     fetchTestimonials(cmsItemId, type);
                                     fetch("https://events.sendpulse.com/events/name/insructor_review_school", {
                                         method: "POST",
