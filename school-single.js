@@ -1170,14 +1170,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) {
                 throw new Error(`Failed to increment subscribers for ${slug}`);
             }
-            alert("Subscription successful!");
-            registerModal.classList.remove("visible");
 
             // Update subscription counts
             updateSubscriptionCounts();
         } catch (error) {
             console.error("Error incrementing subscribers:", error);
-            alert("Failed to subscribe. Please try again.");
         }
     });
 
