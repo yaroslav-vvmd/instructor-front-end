@@ -916,7 +916,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const login_modal = document.querySelector("#login-modal");
+    const login_modal = document.querySelector("#login-modal-2");
 
     function openModal(modalToOpen) {
         modalToOpen.classList.toggle("visible");
