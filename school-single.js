@@ -1144,14 +1144,14 @@ document.addEventListener("DOMContentLoaded", () => {
    
     registerClose.addEventListener('click', () => {
         registerModal.classList.remove('visible');
-        registerSuccess.style.dispaly = "none";
+        registerSuccess.style.display = "none";
         registrationForm.style.display = "block";
         commentField.value = '';
     })
 
     registerOverlay.addEventListener('click', () => {
         registerModal.classList.remove('visible');
-        registerSuccess.style.dispaly = "none";
+        registerSuccess.style.display = "none";
         registrationForm.style.display = "block";
         commentField.value = '';
     })
