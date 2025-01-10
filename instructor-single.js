@@ -929,7 +929,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = document.getElementById("Submit-Register");
 
     const toggleSubmitButton = () => {
-        const isCommentValid = commentField.value.trim().length >= 10;
+        const isCommentValid = commentField.value.trim().length >= 1;
         const isCheckboxChecked = checkboxField.checked;
 
         if (isCommentValid && isCheckboxChecked) {
