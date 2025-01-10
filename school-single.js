@@ -193,6 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         const firstName = userData.firstName;
                         const lastName = userData.lastName;
+                        const email = userData.email;
 
                         const overallRating = form.querySelector('input[name="main-rating"]:checked').value;
                         const qualityOfEducation = form.querySelector('input[name="quality-of-education"]:checked').value;
@@ -211,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             userId: userId,
                             firstName: firstName,
                             lastName: lastName,
-                            testimonialName: testimonialName
+                            testimonialName: testimonialName,
                         };
 
                         fetch('https://instructor-backend.vercel.app/api/testimonials', {
@@ -234,8 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                             "Content-Type": "application/json",
                                         },
                                         body: JSON.stringify({
-                                            email: "artur@71.in.ua",
-                                            phone: "+123456789",
+                                            email: email,
+                                            phone: userId,
                                             user_fname: firstName,
                                             user_lname: lastName,
                                             review_rate: overallRating,
@@ -243,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                             review_r1: qualityOfEducation,
                                             review_r2: instructorAttitude,
                                             review_r3: carCondition,
+                                            us_school: testimonialName,
                                         })
                                     })
                                         .then(response => {
