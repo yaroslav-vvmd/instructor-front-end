@@ -156,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         instructorText.innerHTML = originalText;
     }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     const slug = document.body.getAttribute('data-slug');
     const type = 'instructors';
@@ -300,17 +301,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 const totalElement = document.querySelector('.instructor-content_head-number');
                 const empty1 = document.querySelectorAll('.instructor-content_head-empty')[0];
                 const empty2 = document.querySelectorAll('.instructor-content_head-empty')[1];
-                const word1 = document.querySelectorAll('.instructor-content_head-total')[0];
-                const word2 = document.querySelectorAll('.instructor-content_head-total')[1];
 
-                // Define CSS classes for visibility
+                function getWordForm(count) {
+                    if (count % 100 >= 11 && count % 100 <= 14) {
+                        return 'відгуків'; 
+                    }
+                    switch (count % 10) {
+                        case 1:
+                            return 'відгук'; 
+                        case 2:
+                        case 3:
+                        case 4:
+                            return 'відгуки'; 
+                        default:
+                            return 'відгуків';
+                    }
+                }
+
+                const count = testimonials.length;
+                const wordElement = document.querySelector('.instructor-content_head-total');
+
+                if (count === 0) {
+                    wordElement.style.display = 'none'; т
+                } else {
+                    wordElement.style.display = ''; 
+                    wordElement.textContent = getWordForm(count);
+                }
+
                 const VISIBLE_CLASS = 'visible';
                 const HIDDEN_CLASS = 'hidden';
 
-                // Update testimonials amount
                 testimonialsAmount.textContent = testimonials.length;
 
-                // Calculate total and average ratings
                 const totalRatings = testimonials.reduce((sum, testimonial) => sum + parseFloat(testimonial.overallRating), 0);
                 const averageRating = testimonials.length > 0 ? (totalRatings / testimonials.length).toFixed(1) : "0";
 
@@ -330,36 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (empty2) {
                     empty2.classList.add(HIDDEN_CLASS);
                     empty2.classList.remove(VISIBLE_CLASS);
-                }
-
-                // Handle conditional display for words
-                if (testimonials.length === 1) {
-                    if (word1) {
-                        word1.classList.add(VISIBLE_CLASS);
-                        word1.classList.remove(HIDDEN_CLASS);
-                    }
-                    if (word2) {
-                        word2.classList.add(HIDDEN_CLASS);
-                        word2.classList.remove(VISIBLE_CLASS);
-                    }
-                } else if (testimonials.length > 1) {
-                    if (word1) {
-                        word1.classList.add(HIDDEN_CLASS);
-                        word1.classList.remove(VISIBLE_CLASS);
-                    }
-                    if (word2) {
-                        word2.classList.add(VISIBLE_CLASS);
-                        word2.classList.remove(HIDDEN_CLASS);
-                    }
-                } else {
-                    if (word1) {
-                        word1.classList.add(HIDDEN_CLASS);
-                        word1.classList.remove(VISIBLE_CLASS);
-                    }
-                    if (word2) {
-                        word2.classList.add(HIDDEN_CLASS);
-                        word2.classList.remove(VISIBLE_CLASS);
-                    }
                 }
 
                 document.getElementById('averageQualityOfEducationSVG').innerHTML = data.averageQualityOfEducationSVG;
