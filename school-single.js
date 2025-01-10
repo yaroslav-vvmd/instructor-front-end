@@ -1291,16 +1291,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const slug = item.getAttribute("data-slug");
             registerForm.setAttribute("data-slug", slug);
         });
+
+        // Event listener for form submission
+        registerForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const slug = registerForm.getAttribute("data-slug");
+            handleSubscription(slug);
+        });
+
     });
 
-    // Event listener for form submission
-    registerForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
 
-        const slug = registerForm.getAttribute("data-slug");
-        handleSubscription(slug);
-    });
-
-    // Initial fetch to update subscription counts on page load
     updateSubscriptionCounts();
 });
