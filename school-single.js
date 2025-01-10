@@ -303,15 +303,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 function getWordForm(count) {
                     if (count % 100 >= 11 && count % 100 <= 14) {
-                        return 'відгуків'; 
+                        return 'відгуків';
                     }
                     switch (count % 10) {
                         case 1:
-                            return 'відгук'; 
+                            return 'відгук';
                         case 2:
                         case 3:
                         case 4:
-                            return 'відгуки'; 
+                            return 'відгуки';
                         default:
                             return 'відгуків';
                     }
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (count === 0) {
                     wordElement.style.display = 'none'; т
                 } else {
-                    wordElement.style.display = ''; 
+                    wordElement.style.display = '';
                     wordElement.textContent = getWordForm(count);
                 }
 
@@ -351,6 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     empty2.classList.add(HIDDEN_CLASS);
                     empty2.classList.remove(VISIBLE_CLASS);
                 }
+
 
                 document.getElementById('averageQualityOfEducationSVG').innerHTML = data.averageQualityOfEducationSVG;
                 document.getElementById('averageInstructorAttitudeSVG').innerHTML = data.averageInstructorAttitudeSVG;
@@ -1090,19 +1091,19 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const truncatedElement = document.querySelector('#mobile-webiste');
+    const truncatedElement = document.querySelectorALL('.mobile-webiste');
 
-    if (truncatedElement) {
-        let originalTextContent = truncatedElement.textContent;
+    truncatedElement.forEach(el => {
+        let originalTextContent = el.textContent;
 
         if (originalTextContent.includes('http://') || originalTextContent.includes('https://')) {
             let cleanedUrl = originalTextContent.replace(/^https?:\/\//, '');
             if (cleanedUrl.includes('/')) {
                 cleanedUrl = cleanedUrl.split('/')[0];
             }
-            truncatedElement.textContent = cleanedUrl;
+            el.textContent = cleanedUrl;
         }
-    }
+    })
 
     const textarea = document.getElementById('myTextarea');
 
