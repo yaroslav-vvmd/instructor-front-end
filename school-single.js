@@ -1091,7 +1091,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const truncatedElement = document.querySelectorALL('.mobile-webiste');
+    const truncatedElement = document.querySelectorALL('.mobile-website');
 
     truncatedElement.forEach(el => {
         let originalTextContent = el.textContent;
