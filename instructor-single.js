@@ -933,6 +933,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const emailField = document.getElementById("Email-Register");
     const phoneField = document.getElementById("Tel-Register");
     const commentField = document.getElementById("Comment-Register");
+    const checkboxField = document.getElementById("Checkbox-Register");
+    const submitBtn = document.getElementById("Submit-Register");
+
+    const toggleSubmitButton = () => {
+        const isCommentValid = commentField.value.trim().length >= 10;
+        const isCheckboxChecked = checkboxField.checked;
+
+        if (isCommentValid && isCheckboxChecked) {
+            submitBtn.classList.remove("is-disabled");
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.classList.add("is-disabled");
+            submitBtn.disabled = true;
+        }
+    };
+
+    commentField.addEventListener("input", toggleSubmitButton);
+    checkboxField.addEventListener("change", toggleSubmitButton);
+
+    toggleSubmitButton();
 
     const charCount = document.getElementById('charCount2');
 
@@ -951,8 +971,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const serviceItems = document.querySelectorAll('.instructor_services-item');
     const registerModal = document.getElementById('registration-modal');
-    const registrationForm = document.getElementById('registration-form');
-    const registrationTitle = document.querySelector('.registration-modal_title');
+    const registerForm = document.getElementById('registration-form');
+    const registerTitle = document.querySelector('.registration-modal_title');
     const registerClose = document.querySelector('.registration-modal_close');
     const registerOverlay = document.querySelector('.registration-modal_overlay');
     const registerSuccess = document.querySelector('.modal-request_success');
@@ -960,14 +980,14 @@ document.addEventListener("DOMContentLoaded", () => {
     registerClose.addEventListener('click', () => {
         registerModal.classList.remove('visible');
         registerSuccess.style.display = "none";
-        registrationForm.style.display = "block";
+        registerForm.style.display = "block";
         commentField.value = '';
     });
 
     registerOverlay.addEventListener('click', () => {
         registerModal.classList.remove('visible');
         registerSuccess.style.display = "none";
-        registrationForm.style.display = "block";
+        registerForm.style.display = "block";
         commentField.value = '';
     });
 
@@ -1026,20 +1046,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 openModal(login_modal);
                 return;
             }
-            registrationTitle.textContent = `Запис на "${name}"`;
+            registerTitle.textContent = `Запис на "${name}"`;
             registerModal.classList.add("visible");
 
             // Store the slug in the form's data attribute 
             const slug = item.getAttribute("data-slug");
-            registrationForm.setAttribute("data-slug", slug);
+            registerForm.setAttribute("data-slug", slug);
         });
     });
 
     // Event listener for form submission 
-    registrationForm.addEventListener("submit", async (event) => {
+    registerForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const slug = registrationForm.getAttribute("data-slug");
+        const slug = registerForm.getAttribute("data-slug");
         const subscribedServices = JSON.parse(sessionStorage.getItem("subscribedServices") || "[]");
 
         if (subscribedServices.includes(slug)) {
