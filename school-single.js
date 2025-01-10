@@ -1228,43 +1228,43 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // Event listener for CTA click 
+    // Define handleSubscription function outside the loop
+    const handleSubscription = async (slug) => {
+        const subscribedServices = JSON.parse(sessionStorage.getItem("subscribedServices") || "[]");
+
+        if (subscribedServices.includes(slug)) {
+            console.log(`User already subscribed to ${slug} during this session.`);
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://instructor-backend.vercel.app/services/${slug}/subscribers`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+            if (!response.ok) {
+                throw new Error(`Failed to increment subscribers for ${slug}`);
+            }
+
+            // Update subscription counts
+            updateSubscriptionCounts();
+
+            // Store the slug in sessionStorage to mark as subscribed
+            subscribedServices.push(slug);
+            sessionStorage.setItem("subscribedServices", JSON.stringify(subscribedServices));
+        } catch (error) {
+            console.error("Error incrementing subscribers:", error);
+        }
+    };
+
     serviceItems.forEach((item) => {
         const cta = item.querySelector(".services-item_cta");
         const phone = item.querySelector(".services-item_phone");
         const website = item.querySelector(".services-item_website");
         const name = item.querySelector('.services-item_title').textContent;
-
-        const handleSubscription = async (slug) => {
-            const subscribedServices = JSON.parse(sessionStorage.getItem("subscribedServices") || "[]");
-
-            if (subscribedServices.includes(slug)) {
-                console.log(`User already subscribed to ${slug} during this session.`);
-                return;
-            }
-
-            try {
-                const response = await fetch(
-                    `https://instructor-backend.vercel.app/services/${slug}/subscribers`,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                    }
-                );
-                if (!response.ok) {
-                    throw new Error(`Failed to increment subscribers for ${slug}`);
-                }
-
-                // Update subscription counts
-                updateSubscriptionCounts();
-
-                // Store the slug in sessionStorage to mark as subscribed
-                subscribedServices.push(slug);
-                sessionStorage.setItem("subscribedServices", JSON.stringify(subscribedServices));
-            } catch (error) {
-                console.error("Error incrementing subscribers:", error);
-            }
-        };
 
         phone.addEventListener("click", () => {
             const slug = item.getAttribute("data-slug");
@@ -1291,17 +1291,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const slug = item.getAttribute("data-slug");
             registerForm.setAttribute("data-slug", slug);
         });
-
-        // Event listener for form submission
-        registerForm.addEventListener("submit", async (event) => {
-            event.preventDefault();
-
-            const slug = registerForm.getAttribute("data-slug");
-            handleSubscription(slug);
-        });
-
     });
 
+    // Event listener for form submission
+    registerForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
+        const slug = registerForm.getAttribute("data-slug");
+        handleSubscription(slug);
+    });
+
+    // Initial fetch to update subscription counts on page load
     updateSubscriptionCounts();
+
 });
