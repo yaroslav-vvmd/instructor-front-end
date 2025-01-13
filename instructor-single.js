@@ -306,15 +306,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 function getWordForm(count) {
                     if (count % 100 >= 11 && count % 100 <= 14) {
-                        return 'відгуків'; 
+                        return 'відгуків';
                     }
                     switch (count % 10) {
                         case 1:
-                            return 'відгук'; 
+                            return 'відгук';
                         case 2:
                         case 3:
                         case 4:
-                            return 'відгуки'; 
+                            return 'відгуки';
                         default:
                             return 'відгуків';
                     }
@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!count) {
                     wordElement.style.display = 'none'; т
                 } else {
-                    wordElement.style.display = ''; 
+                    wordElement.style.display = '';
                     wordElement.textContent = getWordForm(count);
                 }
 
@@ -989,7 +989,7 @@ document.addEventListener("DOMContentLoaded", () => {
         commentField.value = '';
         charCount.textContent = `0/520`;
     });
-   
+
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {
             const slug = item.getAttribute("data-slug");
@@ -1075,10 +1075,12 @@ document.addEventListener("DOMContentLoaded", () => {
             handleSubscription(slug);
         });
 
-        website.addEventListener("click", () => {
-            const slug = item.getAttribute("data-slug");
-            handleSubscription(slug);
-        });
+        if (website) {
+            website.addEventListener("click", () => {
+                const slug = item.getAttribute("data-slug");
+                handleSubscription(slug);
+            });
+        }
 
         cta.addEventListener("click", (event) => {
             event.preventDefault();
