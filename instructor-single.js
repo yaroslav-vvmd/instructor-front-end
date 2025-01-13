@@ -707,30 +707,33 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    const phoneLink = document.getElementById('instructor_phone');
-    const phoneNumber = phoneLink.dataset.phone;
+    const phoneLinks = document.querySelectorAll('[data-phone]');
 
-    if (window.innerWidth > 767) {
-        const truncatedNumber = phoneNumber.slice(0, 5) + '...(Показати)';
+    phoneLinks.forEach(phoneLink => {
+        const phoneNumber = phoneLink.dataset.phone;
 
-        phoneLink.querySelector('.truncated-number').textContent = truncatedNumber;
-        phoneLink.querySelector('.full-number').textContent = phoneNumber;
+        if (window.innerWidth > 767) {
+            const truncatedNumber = phoneNumber.slice(0, 5) + '...(Показати)';
 
-        phoneLink.addEventListener('click', function (event) {
-            const fullNumberElement = this.querySelector('.full-number');
-            const truncatedNumberElement = this.querySelector('.truncated-number');
+            phoneLink.querySelector('.truncated-number').textContent = truncatedNumber;
+            phoneLink.querySelector('.full-number').textContent = phoneNumber;
 
-            if (truncatedNumberElement.style.display !== 'none') {
-                event.preventDefault();
-                fullNumberElement.style.display = 'inline';
-                truncatedNumberElement.style.display = 'none';
-                this.href = `tel:${phoneNumber}`;
-            }
-        });
-    } else {
-        phoneLink.querySelector('.truncated-number').textContent = 'Подзвонити';
-        phoneLink.href = `tel:${phoneNumber}`;
-    }
+            phoneLink.addEventListener('click', function (event) {
+                const fullNumberElement = this.querySelector('.full-number');
+                const truncatedNumberElement = this.querySelector('.truncated-number');
+
+                if (truncatedNumberElement.style.display !== 'none') {
+                    event.preventDefault();
+                    fullNumberElement.style.display = 'inline';
+                    truncatedNumberElement.style.display = 'none';
+                    this.href = `tel:${phoneNumber}`;
+                }
+            });
+        } else {
+            phoneLink.querySelector('.truncated-number').textContent = 'Подзвонити';
+            phoneLink.href = `tel:${phoneNumber}`;
+        }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', function () {
