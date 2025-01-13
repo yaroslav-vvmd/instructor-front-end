@@ -989,7 +989,7 @@ document.addEventListener("DOMContentLoaded", () => {
         commentField.value = '';
         charCount.textContent = `0/520`;
     });
-
+   
     const updateSubscriptionCounts = () => {
         serviceItems.forEach(async (item) => {
             const slug = item.getAttribute("data-slug");
@@ -1032,33 +1032,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // Event listener for CTA click 
-    serviceItems.forEach((item) => {
-        const cta = item.querySelector(".services-item_cta");
-        const name = item.querySelector('.services-item_title').textContent;
-
-        cta.addEventListener("click", (event) => {
-            event.preventDefault();
-
-            const userId = localStorage.getItem("uid");
-            if (!userId) {
-                openModal(login_modal);
-                return;
-            }
-            registerTitle.textContent = `Запис на "${name}"`;
-            registerModal.classList.add("visible");
-
-            // Store the slug in the form's data attribute 
-            const slug = item.getAttribute("data-slug");
-            registerForm.setAttribute("data-slug", slug);
-        });
-    });
-
-    // Event listener for form submission 
-    registerForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const slug = registerForm.getAttribute("data-slug");
+    // Define handleSubscription function outside the loop
+    const handleSubscription = async (slug) => {
         const subscribedServices = JSON.parse(sessionStorage.getItem("subscribedServices") || "[]");
 
         if (subscribedServices.includes(slug)) {
@@ -1078,7 +1053,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error(`Failed to increment subscribers for ${slug}`);
             }
 
-            // Update subscription counts 
+            // Update subscription counts
             updateSubscriptionCounts();
 
             // Store the slug in sessionStorage to mark as subscribed
@@ -1087,8 +1062,50 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error incrementing subscribers:", error);
         }
+    };
+
+    serviceItems.forEach((item) => {
+        const cta = item.querySelector(".services-item_cta");
+        const phone = item.querySelector(".services-item_phone");
+        const website = item.querySelector(".services-item_website");
+        const name = item.querySelector('.services-item_title').textContent;
+
+        phone.addEventListener("click", () => {
+            const slug = item.getAttribute("data-slug");
+            handleSubscription(slug);
+        });
+
+        website.addEventListener("click", () => {
+            const slug = item.getAttribute("data-slug");
+            handleSubscription(slug);
+        });
+
+        cta.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const userId = localStorage.getItem("uid");
+            if (!userId) {
+                openModal(login_modal);
+                return;
+            }
+            registerTitle.textContent = `Запис на "${name}"`;
+            registerModal.classList.add("visible");
+
+            // Store the slug in the form's data attribute
+            const slug = item.getAttribute("data-slug");
+            registerForm.setAttribute("data-slug", slug);
+        });
     });
 
-    // Initial fetch to update subscription counts on page load 
+    // Event listener for form submission
+    registerForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const slug = registerForm.getAttribute("data-slug");
+        handleSubscription(slug);
+    });
+
+    // Initial fetch to update subscription counts on page load
     updateSubscriptionCounts();
+
 });
