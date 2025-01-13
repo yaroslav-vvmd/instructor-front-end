@@ -976,6 +976,7 @@ document.addEventListener("DOMContentLoaded", () => {
         registerSuccess.style.display = "none";
         registerForm.style.display = "block";
         commentField.value = '';
+        charCount.textContent = `0/520`;
     });
 
     registerOverlay.addEventListener('click', () => {
@@ -983,6 +984,7 @@ document.addEventListener("DOMContentLoaded", () => {
         registerSuccess.style.display = "none";
         registerForm.style.display = "block";
         commentField.value = '';
+        charCount.textContent = `0/520`;
     });
 
     const updateSubscriptionCounts = () => {
