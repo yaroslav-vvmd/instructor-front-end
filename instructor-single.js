@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const count = testimonials.length;
                 const wordElement = document.querySelector('.instructor-content_head-total');
 
-                if (count === 0) {
+                if (!count) {
                     wordElement.style.display = 'none'; т
                 } else {
                     wordElement.style.display = ''; 
