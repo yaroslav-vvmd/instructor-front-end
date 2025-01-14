@@ -1334,7 +1334,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     });
 
-    // Initial fetch to update subscription counts on page load
     updateSubscriptionCounts();
 
 });
