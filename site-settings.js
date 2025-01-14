@@ -413,7 +413,7 @@ const updateSubscriptionCounts = () => {
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
 
-    if (activeTabs === 0) {
+    if (activeTabs <== 0) {
       localStorage.removeItem(sessionKey);
     }
   });
