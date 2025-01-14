@@ -14,7 +14,7 @@ const getSendPulseAuthToken = async () => {
         console.error(error);
     }
 };
-
+//
 getSendPulseAuthToken();
 
 document.addEventListener("DOMContentLoaded", function () {
