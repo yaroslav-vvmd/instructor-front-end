@@ -1233,36 +1233,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Define handleSubscription function outside the loop
-    const handleSubscription = async (slug) => {
-        const subscribedServices = JSON.parse(sessionStorage.getItem("subscribedServices") || "[]");
-
-        if (subscribedServices.includes(slug)) {
-            console.log(`User already subscribed to ${slug} during this session.`);
-            return;
-        }
-
-        try {
-            const response = await fetch(
-                `https://instructor-backend.vercel.app/services/${slug}/subscribers`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
-            if (!response.ok) {
-                throw new Error(`Failed to increment subscribers for ${slug}`);
-            }
-
-            // Update subscription counts
-            updateSubscriptionCounts();
-
-            // Store the slug in sessionStorage to mark as subscribed
-            subscribedServices.push(slug);
-            sessionStorage.setItem("subscribedServices", JSON.stringify(subscribedServices));
-        } catch (error) {
-            console.error("Error incrementing subscribers:", error);
-        }
-    };
 
     serviceItems.forEach((item) => {
         const cta = item.querySelector(".services-item_cta");
@@ -1272,12 +1242,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         phone.addEventListener("click", () => {
             const slug = item.getAttribute("data-slug");
-            handleSubscription(slug);
+            window.handleSubscription(slug);
         });
 
         website.addEventListener("click", () => {
             const slug = item.getAttribute("data-slug");
-            handleSubscription(slug);
+            window.handleSubscription(slug);
         });
 
         cta.addEventListener("click", (event) => {
@@ -1302,7 +1272,7 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
 
         const slug = registerForm.getAttribute("data-slug");
-        handleSubscription(slug);
+        window.handleSubscription(slug);
         fetch("https://events.sendpulse.com/events/name/instructor_order_bot", {
             method: "POST",
             headers: {
