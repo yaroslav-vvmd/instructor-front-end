@@ -1452,7 +1452,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
     const slug = registerForm.getAttribute("data-slug");
   
-    const isAlreadySubscribed = await window.handleSubscription(slug);
+    const isAlreadySubscribed = await window.handleSubscription(slug, true);
     
     if (!isAlreadySubscribed) {
       fetch("https://events.sendpulse.com/events/name/instructor_order_bot", {
