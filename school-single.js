@@ -1371,7 +1371,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const registerClose = document.querySelector(".registration-modal_close");
   const registerOverlay = document.querySelector(".registration-modal_overlay");
   const registerSuccess = document.querySelector(".modal-request_success");
-  const registerBtn = document.querySelector(".testimonial-modal_submit.is-register");
+  const registerBtn = document.querySelector(
+    ".testimonial-modal_submit.is-register"
+  );
 
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
   const storageModalClose = document.querySelector(".storage-modal_close");
@@ -1454,11 +1456,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listener for form submission
   registerForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-  
+
     const slug = registerForm.getAttribute("data-slug");
-  
+
     const isAlreadySubscribed = await window.handleSubscription(slug, true);
-    
+
     if (!isAlreadySubscribed) {
       fetch("https://events.sendpulse.com/events/name/instructor_order_bot", {
         method: "POST",
@@ -1468,9 +1470,9 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify({
           email: userData.email,
-          phone: userData.uid,
-          user_id: userData.uid,
-          event_date: "2025-01-14",
+          phone: userId,
+          user_id: userId,
+          event_date: new Date().toISOString().split("T")[0],
           order_name: registerTitle.textContent,
           order_provider:
             document.querySelector(".instructor_name").textContent,
@@ -1492,6 +1494,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
   });
-  
+
   updateSubscriptionCounts();
 });
