@@ -363,9 +363,11 @@ const updateSubscriptionCounts = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
+
       if (!response.ok) {
         throw new Error(`Failed to fetch subscriptions for ${slug}`);
       }
+
       const data = await response.json();
       const countElement = item.querySelector(".services-item_count");
       const subscriptions = data.subscribers || 0;
@@ -443,16 +445,16 @@ const updateSubscriptionCounts = () => {
   window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
     const subscribedServices = session.subscribedServices;
-
+  
     if (subscribedServices.includes(slug)) {
       console.log(`User already subscribed to ${slug} during this session.`);
       if (modal) {
         storageModal.classList.add("visible");
         registerModal.classList.remove("visible");
       }
-      return false;
+      return true; // User already subscribed
     }
-
+  
     try {
       const response = await fetch(
         `https://instructor-backend.vercel.app/services/${slug}/subscribers`,
@@ -464,14 +466,17 @@ const updateSubscriptionCounts = () => {
       if (!response.ok) {
         throw new Error(`Failed to increment subscribers for ${slug}`);
       }
-
+  
       updateSubscriptionCounts();
-
+  
       subscribedServices.push(slug);
       updateSession({ ...session, subscribedServices });
-      return true;
+  
+      return false; // Subscription successful
     } catch (error) {
       console.error("Error incrementing subscribers:", error);
+      return false; // Treat as not subscribed due to error
     }
   };
+  
 })();

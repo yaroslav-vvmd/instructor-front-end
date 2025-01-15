@@ -1202,10 +1202,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listener for form submission
   registerForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-
+  
     const slug = registerForm.getAttribute("data-slug");
-
-    if (window.handleSubscription(slug)) {
+  
+    const isAlreadySubscribed = await window.handleSubscription(slug);
+    
+    if (!isAlreadySubscribed) {
       fetch("https://events.sendpulse.com/events/name/instructor_order_bot", {
         method: "POST",
         headers: {
@@ -1238,6 +1240,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
   });
+  
 
   updateSubscriptionCounts();
 });
