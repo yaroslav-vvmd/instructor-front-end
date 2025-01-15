@@ -1211,6 +1211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
 
     const slug = registerForm.getAttribute("data-slug");
+    const userId = localStorage.getItem("uid");
 
     const isAlreadySubscribed = await window.handleSubscription(slug, true);
 
