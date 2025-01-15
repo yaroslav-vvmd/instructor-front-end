@@ -402,11 +402,7 @@ const updateSubscriptionCounts = () => {
   const storageModalClose = document.querySelector(".storage-modal_close");
 
   const registerModal = document.getElementById("registration-modal");
-  const registerForm = document.getElementById("registration-form");
-  const registerClose = document.querySelector(".registration-modal_close");
-  const registerSuccess = document.querySelector(".modal-request_success");
-  const commentField = document.getElementById("Comment-Register");
-  const charCount = document.getElementById("charCount2");
+
 
   if (storageModalClose && storageModalOverlay) {
     storageModalOverlay.addEventListener("click", () => {
@@ -451,13 +447,6 @@ const updateSubscriptionCounts = () => {
       console.log(`User already subscribed to ${slug} during this session.`);
       storageModal.classList.add("visible");
       registerModal.classList.remove("visible");
-      setTimeout(() => {
-        registerSuccess.style.display = "none";
-      }, 500);
-      
-      registerForm.style.display = "block";
-      commentField.value = "";
-      charCount.textContent = `0/520`;
       return;
     }
 

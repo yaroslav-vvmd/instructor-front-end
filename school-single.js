@@ -1174,6 +1174,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const registerOverlay = document.querySelector('.registration-modal_overlay');
     const registerSuccess = document.querySelector('.modal-request_success');
 
+    const storageModalOverlay = document.querySelector(".storage-modal_overlay");
+    const storageModalClose = document.querySelector(".storage-modal_close");
+
+        storageModalOverlay.addEventListener("click", () => {
+            registerModal.classList.remove('visible');
+            registerSuccess.style.display = "none";
+            registerForm.style.display = "block";
+            commentField.value = '';
+            charCount.textContent = `0/520`;        });
+    
+        storageModalClose.addEventListener("click", () => {
+            registerModal.classList.remove('visible');
+            registerSuccess.style.display = "none";
+            registerForm.style.display = "block";
+            commentField.value = '';
+            charCount.textContent = `0/520`;
+        });
+
+
     registerClose.addEventListener('click', () => {
         registerModal.classList.remove('visible');
         registerSuccess.style.display = "none";
