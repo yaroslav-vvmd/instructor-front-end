@@ -403,7 +403,6 @@ const updateSubscriptionCounts = () => {
 
   const registerModal = document.getElementById("registration-modal");
 
-
   if (storageModalClose && storageModalOverlay) {
     storageModalOverlay.addEventListener("click", () => {
       storageModal.classList.remove("visible");
@@ -439,14 +438,16 @@ const updateSubscriptionCounts = () => {
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
 
-  window.handleSubscription = async (slug) => {
+  window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
     const subscribedServices = session.subscribedServices;
 
     if (subscribedServices.includes(slug)) {
       console.log(`User already subscribed to ${slug} during this session.`);
-      storageModal.classList.add("visible");
-      registerModal.classList.remove("visible");
+      if (modal) {
+        storageModal.classList.add("visible");
+        registerModal.classList.remove("visible");
+      }
       return;
     }
 
