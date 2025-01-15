@@ -1177,20 +1177,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const storageModalOverlay = document.querySelector(".storage-modal_overlay");
     const storageModalClose = document.querySelector(".storage-modal_close");
 
-        storageModalOverlay.addEventListener("click", () => {
-            registerModal.classList.remove('visible');
-            registerSuccess.style.display = "none";
-            registerForm.style.display = "block";
-            commentField.value = '';
-            charCount.textContent = `0/520`;        });
-    
-        storageModalClose.addEventListener("click", () => {
-            registerModal.classList.remove('visible');
-            registerSuccess.style.display = "none";
-            registerForm.style.display = "block";
-            commentField.value = '';
-            charCount.textContent = `0/520`;
-        });
+    storageModalOverlay.addEventListener("click", () => {
+        registerModal.classList.remove('visible');
+        registerSuccess.style.display = "none";
+        registerForm.style.display = "block";
+        commentField.value = '';
+        charCount.textContent = `0/520`;
+    });
+
+    storageModalClose.addEventListener("click", () => {
+        registerModal.classList.remove('visible');
+        registerSuccess.style.display = "none";
+        registerForm.style.display = "block";
+        commentField.value = '';
+        charCount.textContent = `0/520`;
+    });
 
 
     registerClose.addEventListener('click', () => {
@@ -1217,16 +1218,21 @@ document.addEventListener("DOMContentLoaded", () => {
         const website = item.querySelector(".services-item_website");
         const name = item.querySelector('.services-item_title').textContent;
 
-        phone.addEventListener("click", () => {
-            const slug = item.getAttribute("data-slug");
-            window.handleSubscription(slug);
-        });
 
-        website.addEventListener("click", () => {
-            const slug = item.getAttribute("data-slug");
-            window.handleSubscription(slug);
-        });
+        if (phone) {
+            phone.addEventListener("click", () => {
+                const slug = item.getAttribute("data-slug");
+                window.handleSubscription(slug);
+            });
+        }
 
+        if (website) {
+            website.addEventListener("click", () => {
+                const slug = item.getAttribute("data-slug");
+                window.handleSubscription(slug);
+            });
+        }
+        
         cta.addEventListener("click", (event) => {
             event.preventDefault();
 
