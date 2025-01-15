@@ -1181,6 +1181,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.handleSubscription(slug, false);
       });
     }
+
     cta.addEventListener("click", (event) => {
       event.preventDefault();
 
@@ -1203,36 +1204,39 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
 
     const slug = registerForm.getAttribute("data-slug");
-    window.handleSubscription(slug);
-    fetch("https://events.sendpulse.com/events/name/instructor_order_bot", {
-      method: "POST",
-      headers: {
-        Authorization: token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: userData.email,
-        phone: userData.uid,
-        user_id: userData.uid,
-        event_date: "2025-01-14",
-        order_name: registerTitle.textContent,
-        order_provider: document.querySelector(".instructor_name").textContent,
-        description: commentField.value,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
+
+    if (window.handleSubscription(slug)) {
+      fetch("https://events.sendpulse.com/events/name/instructor_order_bot", {
+        method: "POST",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userData.email,
+          phone: userData.uid,
+          user_id: userData.uid,
+          event_date: "2025-01-14",
+          order_name: registerTitle.textContent,
+          order_provider:
+            document.querySelector(".instructor_name").textContent,
+          description: commentField.value,
+        }),
       })
-      .then((responseData) => {
-        console.log("Response Data:", responseData);
-      })
-      .catch((error) => {
-        alert("Не вдалось надіслати відгук на вебхук");
-        console.error("Error:", error);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((responseData) => {
+          console.log("Response Data:", responseData);
+        })
+        .catch((error) => {
+          alert("Не вдалось надіслати відгук на вебхук");
+          console.error("Error:", error);
+        });
+    }
   });
 
   updateSubscriptionCounts();

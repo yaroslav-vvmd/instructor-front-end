@@ -448,7 +448,7 @@ const updateSubscriptionCounts = () => {
         storageModal.classList.add("visible");
         registerModal.classList.remove("visible");
       }
-      return;
+      return flase;
     }
 
     try {
@@ -467,6 +467,7 @@ const updateSubscriptionCounts = () => {
 
       subscribedServices.push(slug);
       updateSession({ ...session, subscribedServices });
+      return true;
     } catch (error) {
       console.error("Error incrementing subscribers:", error);
     }
