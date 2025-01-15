@@ -1203,6 +1203,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Store the slug in the form's data attribute
       const slug = item.getAttribute("data-slug");
       registerForm.setAttribute("data-slug", slug);
+      registerForm.setAttribute("data-name", name);
     });
   });
 
@@ -1211,6 +1212,7 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
 
     const slug = registerForm.getAttribute("data-slug");
+    const name = registerForm.getAttribute("data-name");
     const userId = localStorage.getItem("uid");
 
     const isAlreadySubscribed = await window.handleSubscription(slug, true);
@@ -1227,7 +1229,7 @@ document.addEventListener("DOMContentLoaded", () => {
           phone: userId,
           user_id: userId,
           event_date: new Date().toISOString().split("T")[0],
-          order_name: registerTitle.textContent,
+          order_name: name,
           order_provider:
             document.querySelector(".instructor_name").textContent,
           description: commentField.value,
