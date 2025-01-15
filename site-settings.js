@@ -430,7 +430,22 @@ const updateSubscriptionCounts = () => {
     );
   }
 
-  window.addEventListener("beforeunload", () => {
+  let preventUnload = false;
+
+  // Detect clicks on phone links and prevent unload decrement
+  document.addEventListener("click", (event) => {
+    const target = event.target.closest("a[href^='tel:']");
+    if (target) {
+      preventUnload = true;
+    }
+  });
+
+  window.addEventListener("beforeunload", (event) => {
+    if (preventUnload) {
+      preventUnload = false; // Reset for future interactions
+      return; // Skip decrementing active tabs
+    }
+
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
 
