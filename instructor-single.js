@@ -1015,7 +1015,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 openModal(login_modal);
                 return;
             }
-            registerTitle.textContent = `Запис на "${name}"`;
+            registerTitle.textContent = `Запис на '${name}'`;
             registerModal.classList.add("visible");
 
             // Store the slug in the form's data attribute
