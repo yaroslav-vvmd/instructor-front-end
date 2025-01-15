@@ -347,6 +347,9 @@ document.querySelectorAll("[data-format-price]").forEach(function (element) {
   element.textContent = formattedPrice;
 });
 
+
+//------------------------------ SERVICES ------------------------------
+
 const serviceItems = document.querySelectorAll(".instructor_services-item");
 
 const updateSubscriptionCounts = () => {
@@ -435,8 +438,7 @@ const updateSubscriptionCounts = () => {
   });
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
-  const updateSession = (data) =>
-    localStorage.setItem(sessionKey, JSON.stringify(data));
+  const updateSession = (data) => localStorage.setItem(sessionKey, JSON.stringify(data));
 
   window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
@@ -448,7 +450,7 @@ const updateSubscriptionCounts = () => {
         storageModal.classList.add("visible");
         registerModal.classList.remove("visible");
       }
-      return flase;
+      return false;
     }
 
     try {
