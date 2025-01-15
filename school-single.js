@@ -1371,6 +1371,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const registerClose = document.querySelector(".registration-modal_close");
   const registerOverlay = document.querySelector(".registration-modal_overlay");
   const registerSuccess = document.querySelector(".modal-request_success");
+  const registerBtn = document.querySelector(".testimonial-modal_submit.is-register");
 
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
   const storageModalClose = document.querySelector(".storage-modal_close");
@@ -1381,6 +1382,7 @@ document.addEventListener("DOMContentLoaded", () => {
     registerForm.style.display = "block";
     commentField.value = "";
     charCount.textContent = `0/520`;
+    registerBtn.classList.add("is-disabled");
   });
 
   storageModalClose.addEventListener("click", () => {
@@ -1389,6 +1391,7 @@ document.addEventListener("DOMContentLoaded", () => {
     registerForm.style.display = "block";
     commentField.value = "";
     charCount.textContent = `0/520`;
+    registerBtn.classList.add("is-disabled");
   });
 
   registerClose.addEventListener("click", () => {
@@ -1397,6 +1400,7 @@ document.addEventListener("DOMContentLoaded", () => {
     registerForm.style.display = "block";
     commentField.value = "";
     charCount.textContent = `0/520`;
+    registerBtn.classList.add("is-disabled");
   });
 
   registerOverlay.addEventListener("click", () => {
@@ -1405,6 +1409,7 @@ document.addEventListener("DOMContentLoaded", () => {
     registerForm.style.display = "block";
     commentField.value = "";
     charCount.textContent = `0/520`;
+    registerBtn.classList.add("is-disabled");
   });
 
   // Define handleSubscription function outside the loop
