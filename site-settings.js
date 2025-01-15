@@ -397,6 +397,20 @@ const updateSubscriptionCounts = () => {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
 
+  const storageModal = document.querySelector(".storage-modal");
+  const storageModalOverlay = document.querySelector(".storage-modal_overlay");
+  const storageModalClose = document.querySelector(".storage-modal_close");
+
+  if (storageModalClose && storageModalOverlay) {
+    storageModalOverlay.addEventListener("click", () => {
+      storageModal.classList.remove("visible");
+    });
+
+    storageModalClose.addEventListener("click", () => {
+      storageModal.classList.remove("visible");
+    });
+  }
+
   localStorage.setItem(
     tabsKey,
     (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
@@ -428,6 +442,7 @@ const updateSubscriptionCounts = () => {
 
     if (subscribedServices.includes(slug)) {
       console.log(`User already subscribed to ${slug} during this session.`);
+      storageModal.classList.add("visible");
       return;
     }
 
