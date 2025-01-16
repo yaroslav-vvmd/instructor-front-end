@@ -347,6 +347,23 @@ document.querySelectorAll("[data-format-price]").forEach(function (element) {
   element.textContent = formattedPrice;
 });
 
+//------------------------------ LOADER ------------------------------
+
+const mask = document.querySelector(".mask");
+
+window.addEventListener("load", () => {
+  if (mask) {
+    setTimeout(() => {
+      mask.classList.add("hide");
+      if (document.querySelector(".new-hero")) {
+        animateSVG();
+      }
+    }, 1000);
+    setTimeout(() => {
+      mask.remove();
+    }, 1200);
+  }
+});
 
 //------------------------------ SERVICES ------------------------------
 
@@ -455,12 +472,13 @@ const updateSubscriptionCounts = () => {
   });
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
-  const updateSession = (data) => localStorage.setItem(sessionKey, JSON.stringify(data));
+  const updateSession = (data) =>
+    localStorage.setItem(sessionKey, JSON.stringify(data));
 
   window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
     const subscribedServices = session.subscribedServices;
-  
+
     if (subscribedServices.includes(slug)) {
       console.log(`User already subscribed to ${slug} during this session.`);
       if (modal) {
@@ -469,7 +487,7 @@ const updateSubscriptionCounts = () => {
       }
       return true; // User already subscribed
     }
-  
+
     try {
       const response = await fetch(
         `https://instructor-backend.vercel.app/services/${slug}/subscribers`,
@@ -481,17 +499,16 @@ const updateSubscriptionCounts = () => {
       if (!response.ok) {
         throw new Error(`Failed to increment subscribers for ${slug}`);
       }
-  
+
       updateSubscriptionCounts();
-  
+
       subscribedServices.push(slug);
       updateSession({ ...session, subscribedServices });
-  
+
       return false; // Subscription successful
     } catch (error) {
       console.error("Error incrementing subscribers:", error);
       return false; // Treat as not subscribed due to error
     }
   };
-  
 })();

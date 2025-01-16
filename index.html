@@ -297,55 +297,49 @@
     };
 
     const getUserCity = async () => {
-        console.log('');
-        console.log('/ ----------- Визначення міста: Start ----------- /');
+    console.log('');
+    console.log('/ ----------- Визначення міста: Start ----------- /');
 
-        const storageUserData = localStorage.getItem('userData');
-        const doNotShowCityModal = sessionStorage.getItem('doNotShowCityModal');
-        let userCity = storageUserData ? JSON.parse(storageUserData).city?.trim() : null;
+    const storageUserData = localStorage.getItem('userData');
+    const doNotShowCityModal = sessionStorage.getItem('doNotShowCityModal');
+    let userCity = storageUserData ? JSON.parse(storageUserData).city?.trim() : null;
 
-        if (!doNotShowCityModal) {
-            let currentCity = localStorage.getItem('currentCity');
-
-            if (userCity) {
-                console.log('Місто береться з userData: ', userCity);
-                localStorage.setItem('userConfirmedCity', userCity);
-            }
-
+    if (!doNotShowCityModal) {
+        if (userCity) {
+            console.log('Місто береться з userData: ', userCity);
+            localStorage.setItem('userConfirmedCity', userCity);
+            updateCityInfo(userCity, false); // Always prioritize userData.city
+        } else {
             await getLocation();
             const newCityFromIP = localStorage.getItem('currentCity');
+            const citySelect = document.querySelector('[data-city-select="schools"]') || 
+                               document.querySelector('[data-city-select="instructors"]');
+            const cityOptions = citySelect?.querySelectorAll('option') || [];
 
-            if (newCityFromIP) {
-                if (currentCity && newCityFromIP.toUpperCase() !== currentCity.toUpperCase()) {
-                    console.log('** IP user`а змінився **');
-                    localStorage.setItem('currentCity', newCityFromIP);
-                }
+            const cityExists = Array.from(cityOptions).some(option =>
+                option.value.toUpperCase().includes(newCityFromIP?.toUpperCase())
+            );
 
-                if (!userCity || newCityFromIP.toUpperCase() !== userCity.toUpperCase()) {
-                    console.log('Вибране місто по IP: ', newCityFromIP);
-                    updateCityInfo(newCityFromIP);
-                } else {
-                    console.log('Місто залишається тим самим: ', userCity);
-                    updateCityInfo(userCity, false);
-                }
+            if (cityExists && newCityFromIP) {
+                console.log('Вибране місто по IP: ', newCityFromIP);
+                updateCityInfo(newCityFromIP);
             } else {
-                console.log('Місто визначається по геолокації або з localStorage');
-                updateCityInfo(currentCity);
-            }
-
-            console.log('Останнє місто: ' + currentCity);
-            console.log('Поточне місто: ' + newCityFromIP);
-        } else {
-            if (userCity) {
-                console.log('Місто береться з userData: ', userCity);
-                localStorage.setItem('userConfirmedCity', userCity);
-                updateCityInfo(userCity, false);
+                console.log('Місто по IP не знайдено в базі даних');
+                updateCityInfo(userCity || 'Київ', false); // Fallback to userCity or default
             }
         }
+    } else {
+        if (userCity) {
+            console.log('Місто береться з userData: ', userCity);
+            localStorage.setItem('userConfirmedCity', userCity);
+            updateCityInfo(userCity, false);
+        }
+    }
 
-        console.log('/ ----------- Визначення міста: End ----------- /');
-        console.log('');
-    };
+    console.log('/ ----------- Визначення міста: End ----------- /');
+    console.log('');
+};
+
 
 
 </script>
