@@ -349,15 +349,12 @@ document.querySelectorAll("[data-format-price]").forEach(function (element) {
 
 //------------------------------ LOADER ------------------------------
 
-const mask = document.querySelector(".mask");
+const mask = document.querySelector(".loader");
 
 window.addEventListener("load", () => {
   if (mask) {
     setTimeout(() => {
       mask.classList.add("hide");
-      if (document.querySelector(".new-hero")) {
-        animateSVG();
-      }
     }, 2000);
     setTimeout(() => {
       mask.remove();
