@@ -358,10 +358,10 @@ window.addEventListener("load", () => {
       if (document.querySelector(".new-hero")) {
         animateSVG();
       }
-    }, 1000);
+    }, 2000);
     setTimeout(() => {
       mask.remove();
-    }, 1200);
+    }, 2200);
   }
 });
 
