@@ -415,37 +415,40 @@ const updateSubscriptionCounts = () => {
 (function () {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
-
+  const lastActivityKey = "lastActivity"; // Key to track the last activity timestamp
+  
   const storageModal = document.querySelector(".storage-modal");
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
   const storageModalClose = document.querySelector(".storage-modal_close");
-
+  
   const registerModal = document.getElementById("registration-modal");
-
+  
   if (storageModalClose && storageModalOverlay) {
     storageModalOverlay.addEventListener("click", () => {
       storageModal.classList.remove("visible");
     });
-
+  
     storageModalClose.addEventListener("click", () => {
       storageModal.classList.remove("visible");
     });
   }
-
+  
+  // Increment the active tabs count
   localStorage.setItem(
     tabsKey,
     (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
   );
-
+  
+  // Initialize the sessionKey if not present
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
       sessionKey,
       JSON.stringify({ subscribedServices: [] })
     );
   }
-
+  
   let isPhoneLinkClicked = false;
-
+  
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
@@ -455,21 +458,35 @@ const updateSubscriptionCounts = () => {
         isPhoneLinkClicked = false; // Reset after some time to avoid interference
       }, 300); // Adjust delay as necessary
     }
-  
   });
-
-  window.addEventListener("beforeunload", (event) => {
+  
+  // Handle tab unload
+  window.addEventListener("beforeunload", () => {
     if (isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
-
+  
+    // Record last activity timestamp
+    localStorage.setItem(lastActivityKey, Date.now().toString());
+  
+    // Decrement active tabs count
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
-
-    if (activeTabs == 0) {
-      localStorage.removeItem(sessionKey);
+  
+    // Only remove sessionKey if all tabs are closed (activeTabs is 0)
+    if (activeTabs === 0) {
+      setTimeout(() => {
+        const now = Date.now();
+        const lastActivity = parseInt(localStorage.getItem(lastActivityKey) || "0");
+        const timeDiff = now - lastActivity;
+  
+        // Remove sessionKey only if no recent activity (e.g., reload within 100ms)
+        if (timeDiff > 100) {
+          localStorage.removeItem(sessionKey);
+        }
+      }, 200);
     }
-  });
+  });  
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
