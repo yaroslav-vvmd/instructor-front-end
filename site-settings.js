@@ -433,10 +433,6 @@ const updateSubscriptionCounts = () => {
     });
   }
 
-  localStorage.setItem(
-    tabsKey,
-    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-  );
 
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
@@ -446,6 +442,7 @@ const updateSubscriptionCounts = () => {
   }
 
   let isPhoneLinkClicked = false;
+
   const isReloading = sessionStorage.getItem(isReloadingKey) === "true";
 
   if (!isReloading) {
