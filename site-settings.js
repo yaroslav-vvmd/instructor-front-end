@@ -459,18 +459,21 @@ const updateSubscriptionCounts = () => {
   });
 
   window.addEventListener("beforeunload", (event) => {
-    if (isPhoneLinkClicked) {
+    // Check if the user is reloading the page
+    const isReload = performance.navigation.type === performance.navigation.TYPE_RELOAD;
+  
+    if (isReload || isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
-
+  
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
-
+  
     if (activeTabs == 0) {
       localStorage.removeItem(sessionKey);
     }
   });
-
+  
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
