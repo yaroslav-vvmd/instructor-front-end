@@ -432,11 +432,13 @@ const updateSubscriptionCounts = () => {
     });
   }
 
+  // Increment active tabs on load
   localStorage.setItem(
     tabsKey,
     (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
   );
 
+  // Ensure sessionKey exists
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
       sessionKey,
@@ -455,18 +457,29 @@ const updateSubscriptionCounts = () => {
         isPhoneLinkClicked = false; // Reset after some time to avoid interference
       }, 300); // Adjust delay as necessary
     }
-  
   });
+
+  // Handle beforeunload to distinguish between reload and tab close
+  let isTabReloading = false;
 
   window.addEventListener("beforeunload", (event) => {
     if (isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
 
+    // Mark as reloading if the user reloads the page
+    isTabReloading = true;
+  });
+
+  window.addEventListener("unload", () => {
+    if (isPhoneLinkClicked || isTabReloading) {
+      return; // Skip decrementing active tabs on phone link click or reload
+    }
+
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
 
-    if (activeTabs == 0) {
+    if (activeTabs === 0) {
       localStorage.removeItem(sessionKey);
     }
   });
