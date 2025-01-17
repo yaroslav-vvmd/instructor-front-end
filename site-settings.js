@@ -415,29 +415,23 @@ const updateSubscriptionCounts = () => {
 (function () {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
-
+  
   const storageModal = document.querySelector(".storage-modal");
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
   const storageModalClose = document.querySelector(".storage-modal_close");
-
+  
   const registerModal = document.getElementById("registration-modal");
-
+  
   if (storageModalClose && storageModalOverlay) {
     storageModalOverlay.addEventListener("click", () => {
       storageModal.classList.remove("visible");
     });
-
+  
     storageModalClose.addEventListener("click", () => {
       storageModal.classList.remove("visible");
     });
   }
-
-  // Increment active tabs on load
-  localStorage.setItem(
-    tabsKey,
-    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-  );
-
+  
   // Ensure sessionKey exists
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
@@ -445,10 +439,23 @@ const updateSubscriptionCounts = () => {
       JSON.stringify({ subscribedServices: [] })
     );
   }
-
-  let isPhoneLinkClicked = false;
-
+  
+  // Check if this tab is new or reloaded
+  let isNewTab = false;
+  if (!sessionStorage.getItem("tabIdentifier")) {
+    // This is a new tab
+    isNewTab = true;
+    sessionStorage.setItem("tabIdentifier", Date.now().toString()); // Unique ID for this tab
+  
+    // Increment active tabs count
+    localStorage.setItem(
+      tabsKey,
+      (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+    );
+  }
+  
   // Detect clicks on phone links and prevent unload decrement
+  let isPhoneLinkClicked = false;
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
     if (target) {
@@ -458,31 +465,24 @@ const updateSubscriptionCounts = () => {
       }, 300); // Adjust delay as necessary
     }
   });
-
-  // Handle beforeunload to distinguish between reload and tab close
-  let isTabReloading = false;
-
-  window.addEventListener("beforeunload", (event) => {
+  
+  // Handle unload to decrement tabs count
+  window.addEventListener("beforeunload", () => {
     if (isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
-
-    // Mark as reloading if the user reloads the page
-    isTabReloading = true;
-  });
-
-  window.addEventListener("unload", () => {
-    if (isPhoneLinkClicked || isTabReloading) {
-      return; // Skip decrementing active tabs on phone link click or reload
-    }
-
-    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    localStorage.setItem(tabsKey, activeTabs.toString());
-
-    if (activeTabs === 0) {
-      localStorage.removeItem(sessionKey);
+  
+    // Only decrement if this was a new tab (not reload)
+    if (isNewTab) {
+      const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
+      localStorage.setItem(tabsKey, activeTabs.toString());
+  
+      if (activeTabs === 0) {
+        localStorage.removeItem(sessionKey);
+      }
     }
   });
+  
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
