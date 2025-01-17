@@ -415,7 +415,7 @@ const updateSubscriptionCounts = () => {
 (function () {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
-  const isTabReloadingKey = "isTabReloading"; // Key to track if the tab is reloading
+  const sessionInitializedKey = "sessionInitialized"; // Key to track if the tab has already been initialized
   
   const storageModal = document.querySelector(".storage-modal");
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
@@ -431,11 +431,14 @@ const updateSubscriptionCounts = () => {
     });
   }
   
-  // Increment the active tabs count
-  localStorage.setItem(
-    tabsKey,
-    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-  );
+  // Check if the tab is new (not reloaded)
+  if (!sessionStorage.getItem(sessionInitializedKey)) {
+    sessionStorage.setItem(sessionInitializedKey, "true"); // Mark the tab as initialized
+    localStorage.setItem(
+      tabsKey,
+      (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+    );
+  }
   
   // Initialize the sessionKey if not present
   if (!localStorage.getItem(sessionKey)) {
@@ -445,33 +448,33 @@ const updateSubscriptionCounts = () => {
     );
   }
   
-  // Detect if the tab is reloading
-  sessionStorage.setItem(isTabReloadingKey, "false");
+  let isPhoneLinkClicked = false;
+  
+  // Detect clicks on phone links and prevent unload decrement
+  document.addEventListener("click", (event) => {
+    const target = event.target.closest("a[href^='tel:']");
+    if (target) {
+      isPhoneLinkClicked = true; // Mark that the phone link was clicked
+      setTimeout(() => {
+        isPhoneLinkClicked = false; // Reset after some time to avoid interference
+      }, 300); // Adjust delay as necessary
+    }
+  });
   
   // Handle tab unload
   window.addEventListener("beforeunload", () => {
-    // Mark the tab as reloading before the unload event
-    sessionStorage.setItem(isTabReloadingKey, "true");
+    if (isPhoneLinkClicked) {
+      return; // Skip decrementing active tabs
+    }
   
-    setTimeout(() => {
-      const isTabReloading = sessionStorage.getItem(isTabReloadingKey) === "true";
+    // Decrement active tabs count only for fully closed tabs
+    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
+    localStorage.setItem(tabsKey, activeTabs.toString());
   
-      // Decrement active tabs count only if it's not a reload
-      if (!isTabReloading) {
-        const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-        localStorage.setItem(tabsKey, activeTabs.toString());
-  
-        // Remove sessionKey if no active tabs remain
-        if (activeTabs === 0) {
-          localStorage.removeItem(sessionKey);
-        }
-      }
-    }, 100); // Delay to handle tab reload vs close
-  });
-  
-  // Ensure the tab is not marked as reloading when fully loaded
-  window.addEventListener("load", () => {
-    sessionStorage.setItem(isTabReloadingKey, "false");
+    // Remove sessionKey if no active tabs remain
+    if (activeTabs === 0) {
+      localStorage.removeItem(sessionKey);
+    }
   });
   
   
