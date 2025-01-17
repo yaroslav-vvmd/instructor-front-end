@@ -421,8 +421,6 @@ const updateSubscriptionCounts = () => {
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
   const storageModalClose = document.querySelector(".storage-modal_close");
   
-  const registerModal = document.getElementById("registration-modal");
-  
   if (storageModalClose && storageModalOverlay) {
     storageModalOverlay.addEventListener("click", () => {
       storageModal.classList.remove("visible");
@@ -473,20 +471,12 @@ const updateSubscriptionCounts = () => {
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
   
-    // Only remove sessionKey if all tabs are closed (activeTabs is 0)
+    // Immediately remove sessionKey if no active tabs remain
     if (activeTabs === 0) {
-      setTimeout(() => {
-        const now = Date.now();
-        const lastActivity = parseInt(localStorage.getItem(lastActivityKey) || "0");
-        const timeDiff = now - lastActivity;
-  
-        // Remove sessionKey only if no recent activity (e.g., reload within 100ms)
-        if (timeDiff > 100) {
-          localStorage.removeItem(sessionKey);
-        }
-      }, 200);
+      localStorage.removeItem(sessionKey);
     }
-  });  
+  });
+  
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
