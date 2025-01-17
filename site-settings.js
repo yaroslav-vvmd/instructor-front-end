@@ -431,13 +431,18 @@ const updateSubscriptionCounts = () => {
     });
   }
   
+  // Ensure the tabs count does not go negative
+  function setTabsCount(count) {
+    const sanitizedCount = Math.max(count, 0); // Prevent negative values
+    localStorage.setItem(tabsKey, sanitizedCount.toString());
+    return sanitizedCount;
+  }
+  
   // Check if the tab is new (not reloaded)
   if (!sessionStorage.getItem(sessionInitializedKey)) {
     sessionStorage.setItem(sessionInitializedKey, "true"); // Mark the tab as initialized
-    localStorage.setItem(
-      tabsKey,
-      (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-    );
+    const newTabsCount = (parseInt(localStorage.getItem(tabsKey) || "0") + 1);
+    setTabsCount(newTabsCount); // Increment tabs count
   }
   
   // Initialize the sessionKey if not present
@@ -469,14 +474,13 @@ const updateSubscriptionCounts = () => {
   
     // Decrement active tabs count only for fully closed tabs
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    localStorage.setItem(tabsKey, activeTabs.toString());
+    const updatedTabsCount = setTabsCount(activeTabs); // Safeguard against negative values
   
     // Remove sessionKey if no active tabs remain
-    if (activeTabs === 0) {
+    if (updatedTabsCount === 0) {
       localStorage.removeItem(sessionKey);
     }
   });
-  
   
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
