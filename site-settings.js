@@ -458,19 +458,35 @@ const updateSubscriptionCounts = () => {
   
   });
 
+  let isReloading = false;
+
   window.addEventListener("beforeunload", (event) => {
-    if (isPhoneLinkClicked) {
+    if (isPhoneLinkClicked || isReloading) {
       return; // Skip decrementing active tabs
     }
-
+  
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
-
-    if (activeTabs == 0) {
+  
+    if (activeTabs === 0) {
       localStorage.removeItem(sessionKey);
     }
   });
-
+  
+  // Set `isReloading` when the page reload button is clicked
+  window.addEventListener("keydown", (event) => {
+    if ((event.ctrlKey && event.key === "r") || event.key === "F5") {
+      isReloading = true;
+    }
+  });
+  
+  // Handle programmatic reload
+  window.addEventListener("load", () => {
+    if (document.referrer === window.location.href) {
+      isReloading = true;
+    }
+  });
+  
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
