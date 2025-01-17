@@ -444,19 +444,22 @@ const updateSubscriptionCounts = () => {
     );
   }
 
-  let preventUnload = false;
+  let isPhoneLinkClicked = false;
 
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
     if (target) {
-      preventUnload = true;
+      isPhoneLinkClicked = true; // Mark that the phone link was clicked
+      setTimeout(() => {
+        isPhoneLinkClicked = false; // Reset after some time to avoid interference
+      }, 300); // Adjust delay as necessary
     }
+  
   });
 
   window.addEventListener("beforeunload", (event) => {
-    if (preventUnload) {
-      preventUnload = false; // Reset for future interactions
+    if (isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
 
