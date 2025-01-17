@@ -445,7 +445,8 @@ const updateSubscriptionCounts = () => {
   }
 
   let isPhoneLinkClicked = false;
-
+  let isReloading = false;
+  
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
@@ -459,18 +460,30 @@ const updateSubscriptionCounts = () => {
   });
 
   window.addEventListener("beforeunload", (event) => {
-    if (isPhoneLinkClicked) {
+    sessionStorage.setItem("isReloading", "true");
+  
+    if (isPhoneLinkClicked || isReloading) {
       return; // Skip decrementing active tabs
     }
-
+  
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
-
+  
     if (activeTabs == 0) {
       localStorage.removeItem(sessionKey);
     }
   });
 
+  window.addEventListener("load", () => {
+    // Check if this is a reload
+    if (sessionStorage.getItem("isReloading") === "true") {
+      isReloading = true;
+      sessionStorage.removeItem("isReloading");
+    } else {
+      isReloading = false;
+    }
+  });
+  
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
