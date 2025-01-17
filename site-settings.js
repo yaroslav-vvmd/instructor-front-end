@@ -455,7 +455,6 @@ const updateSubscriptionCounts = () => {
         isPhoneLinkClicked = false; // Reset after some time to avoid interference
       }, 300); // Adjust delay as necessary
     }
-  
   });
 
   window.addEventListener("beforeunload", (event) => {
@@ -463,12 +462,12 @@ const updateSubscriptionCounts = () => {
       return; // Skip decrementing active tabs
     }
 
-    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    localStorage.setItem(tabsKey, activeTabs.toString());
-
     if (activeTabs == 0) {
       localStorage.removeItem(sessionKey);
     }
+
+    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
+    localStorage.setItem(tabsKey, activeTabs.toString());
   });
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
