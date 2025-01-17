@@ -415,46 +415,37 @@ const updateSubscriptionCounts = () => {
 (function () {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
-  const sessionInitializedKey = "sessionInitialized"; // Key to track if the tab has already been initialized
-  
+
   const storageModal = document.querySelector(".storage-modal");
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
   const storageModalClose = document.querySelector(".storage-modal_close");
-  
+
+  const registerModal = document.getElementById("registration-modal");
+
   if (storageModalClose && storageModalOverlay) {
     storageModalOverlay.addEventListener("click", () => {
       storageModal.classList.remove("visible");
     });
-  
+
     storageModalClose.addEventListener("click", () => {
       storageModal.classList.remove("visible");
     });
   }
-  
-  // Ensure the tabs count does not go negative
-  function setTabsCount(count) {
-    const sanitizedCount = Math.max(count, 0); // Prevent negative values
-    localStorage.setItem(tabsKey, sanitizedCount.toString());
-    return sanitizedCount;
-  }
-  
-  // Check if the tab is new (not reloaded)
-  if (!sessionStorage.getItem(sessionInitializedKey)) {
-    sessionStorage.setItem(sessionInitializedKey, "true"); // Mark the tab as initialized
-    const newTabsCount = (parseInt(localStorage.getItem(tabsKey) || "0") + 1);
-    setTabsCount(newTabsCount); // Increment tabs count
-  }
-  
-  // Initialize the sessionKey if not present
+
+  localStorage.setItem(
+    tabsKey,
+    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+  );
+
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
       sessionKey,
       JSON.stringify({ subscribedServices: [] })
     );
   }
-  
+
   let isPhoneLinkClicked = false;
-  
+
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
@@ -464,24 +455,21 @@ const updateSubscriptionCounts = () => {
         isPhoneLinkClicked = false; // Reset after some time to avoid interference
       }, 300); // Adjust delay as necessary
     }
-  });
   
-  // Handle tab unload
-  window.addEventListener("beforeunload", () => {
+  });
+
+  window.addEventListener("beforeunload", (event) => {
     if (isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
-  
-    // Decrement active tabs count only for fully closed tabs
+
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    const updatedTabsCount = setTabsCount(activeTabs); // Safeguard against negative values
-  
-    // Remove sessionKey if no active tabs remain
-    if (updatedTabsCount === 0) {
+    localStorage.setItem(tabsKey, activeTabs.toString());
+
+    if (activeTabs == 0) {
       localStorage.removeItem(sessionKey);
     }
   });
-  
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
