@@ -415,7 +415,6 @@ const updateSubscriptionCounts = () => {
 (function () {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
-  const tabUniqueKey = "isTabActive";
 
   const storageModal = document.querySelector(".storage-modal");
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
@@ -433,27 +432,20 @@ const updateSubscriptionCounts = () => {
     });
   }
 
-  if (!sessionStorage.getItem(tabUniqueKey)) {
-    // Only increment tabsKey if this is a new tab
+  localStorage.setItem(
+    tabsKey,
+    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+  );
+
+  if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
-      tabsKey,
-      (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+      sessionKey,
+      JSON.stringify({ subscribedServices: [] })
     );
-  
-    // Mark this tab as active in sessionStorage
-    sessionStorage.setItem(tabUniqueKey, "true");
-  
-    // Initialize sessionKey only if it doesn't already exist
-    if (!localStorage.getItem(sessionKey)) {
-      localStorage.setItem(
-        sessionKey,
-        JSON.stringify({ subscribedServices: [] })
-      );
-    }
   }
+
   let isPhoneLinkClicked = false;
-  let isReloading = false;
-  
+
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
@@ -467,27 +459,15 @@ const updateSubscriptionCounts = () => {
   });
 
   window.addEventListener("beforeunload", (event) => {
-    sessionStorage.setItem("isReloading", "true");
-  
-    if (isPhoneLinkClicked || isReloading) {
+    if (isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
-  
+
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
-  
+
     if (activeTabs == 0) {
       localStorage.removeItem(sessionKey);
-    }
-  });
-
-  window.addEventListener("load", () => {
-    // Check if this is a reload
-    if (sessionStorage.getItem("isReloading") === "true") {
-      isReloading = true;
-      sessionStorage.removeItem("isReloading");
-    } else {
-      isReloading = false;
     }
   });
 
