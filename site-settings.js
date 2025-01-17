@@ -415,7 +415,6 @@ const updateSubscriptionCounts = () => {
 (function () {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
-  const isReloadingKey = "isReloading";
 
   const storageModal = document.querySelector(".storage-modal");
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
@@ -433,6 +432,10 @@ const updateSubscriptionCounts = () => {
     });
   }
 
+  localStorage.setItem(
+    tabsKey,
+    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+  );
 
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
@@ -443,16 +446,6 @@ const updateSubscriptionCounts = () => {
 
   let isPhoneLinkClicked = false;
 
-  const isReloading = sessionStorage.getItem(isReloadingKey) === "true";
-
-  if (!isReloading) {
-    // Increment active tabs only if not reloading
-    localStorage.setItem(
-      tabsKey,
-      (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-    );
-  }
-
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
@@ -462,6 +455,7 @@ const updateSubscriptionCounts = () => {
         isPhoneLinkClicked = false; // Reset after some time to avoid interference
       }, 300); // Adjust delay as necessary
     }
+  
   });
 
   window.addEventListener("beforeunload", (event) => {
@@ -472,17 +466,9 @@ const updateSubscriptionCounts = () => {
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
     localStorage.setItem(tabsKey, activeTabs.toString());
 
-    if (activeTabs === 0) {
+    if (activeTabs == 0) {
       localStorage.removeItem(sessionKey);
     }
-
-    // Set reload flag for sessionStorage
-    sessionStorage.setItem(isReloadingKey, "true");
-  });
-
-  // Reset reload flag on page load
-  window.addEventListener("load", () => {
-    sessionStorage.removeItem(isReloadingKey);
   });
 
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
