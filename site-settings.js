@@ -415,6 +415,7 @@ const updateSubscriptionCounts = () => {
 (function () {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
+  const tabUniqueKey = "isTabActive";
 
   const storageModal = document.querySelector(".storage-modal");
   const storageModalOverlay = document.querySelector(".storage-modal_overlay");
@@ -432,18 +433,24 @@ const updateSubscriptionCounts = () => {
     });
   }
 
-  localStorage.setItem(
-    tabsKey,
-    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-  );
-
-  if (!localStorage.getItem(sessionKey)) {
+  if (!sessionStorage.getItem(tabUniqueKey)) {
+    // Only increment tabsKey if this is a new tab
     localStorage.setItem(
-      sessionKey,
-      JSON.stringify({ subscribedServices: [] })
+      tabsKey,
+      (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
     );
+  
+    // Mark this tab as active in sessionStorage
+    sessionStorage.setItem(tabUniqueKey, "true");
+  
+    // Initialize sessionKey only if it doesn't already exist
+    if (!localStorage.getItem(sessionKey)) {
+      localStorage.setItem(
+        sessionKey,
+        JSON.stringify({ subscribedServices: [] })
+      );
+    }
   }
-
   let isPhoneLinkClicked = false;
   let isReloading = false;
   
@@ -483,7 +490,7 @@ const updateSubscriptionCounts = () => {
       isReloading = false;
     }
   });
-  
+
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
