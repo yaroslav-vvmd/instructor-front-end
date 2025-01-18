@@ -172,6 +172,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let testimonials = [];
   let currentIndex = 0;
   const testimonialsToShow = 3;
+  const loader = $(".loader__wrapper");
+  const empty = $(".testimonials_empty")
 
   if (slug) {
     fetch(
@@ -305,6 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function fetchTestimonials(cmsItemId, type) {
+    loader.css("display", "flex");
     fetch(
       `https://instructor-backend.vercel.app/api/testimonials/${cmsItemId}/${type}`,
       {
@@ -322,7 +325,11 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .then((data) => {
         testimonials = data.testimonials.reverse();
-        if (!testimonials.length) return;
+        if (!testimonials.length){
+          loader.css("display", "none");
+          empty.css("display", "flex");
+          return;
+        }
         currentIndex = 0;
 
         const userId = localStorage.getItem("uid");
@@ -458,6 +465,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateTestimonials() {
+    loader.css("display", "none");
     const testimonialsContainer = document.querySelector(
       ".testimonials_list-inner"
     );
