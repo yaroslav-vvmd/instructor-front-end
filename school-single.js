@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let testimonials = [];
   let currentIndex = 0;
   const testimonialsToShow = 3;
-  const loader = $(".loader__wrapper");
+  const loader = $(".loader__wrapper.is-single");
   const empty = $(".testimonials_empty")
 
   if (slug) {
@@ -1377,7 +1377,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (userData.email) emailField.value = userData.email;
     phoneField.value = localStorage.getItem("uid") || "";
   }
-
+	const loader = $(".loader__wrapper.is-register");
   const serviceItems = document.querySelectorAll(".instructor_services-item");
   const registerModal = document.getElementById("registration-modal");
   const registerForm = document.getElementById("registration-form");
@@ -1471,7 +1471,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listener for form submission
   registerForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-
+    loader.css("display", "flex");
     const slug = registerForm.getAttribute("data-slug");
     const name = registerForm.getAttribute("data-name");
     const userId = localStorage.getItem("uid");
@@ -1504,8 +1504,10 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((responseData) => {
           console.log("Response Data:", responseData);
+          loader.css("display", "none");
         })
         .catch((error) => {
+          loader.css("display", "none");
           alert("Не вдалось надіслати відгук на вебхук");
           console.error("Error:", error);
         });

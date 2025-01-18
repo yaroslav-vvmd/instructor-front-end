@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let testimonials = [];
   let currentIndex = 0;
   const testimonialsToShow = 3;
-  const loader = $(".loader__wrapper");
+  const loader = $(".loader__wrapper.is-single");
   const empty = $(".testimonials_empty")
 
   if (slug) {
@@ -1139,6 +1139,7 @@ document.addEventListener("DOMContentLoaded", () => {
     phoneField.value = localStorage.getItem("uid") || "";
   }
 
+	const loader = $(".loader__wrapper.is-register");
   const serviceItems = document.querySelectorAll(".instructor_services-item");
   const registerModal = document.getElementById("registration-modal");
   const registerForm = document.getElementById("registration-form");
@@ -1178,6 +1179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     commentField.value = "";
     charCount.textContent = `0/520`;
     registerBtn.classList.add("is-disabled");
+    loader.css("display", "none");
   });
 
   registerOverlay.addEventListener("click", () => {
@@ -1187,6 +1189,7 @@ document.addEventListener("DOMContentLoaded", () => {
     commentField.value = "";
     charCount.textContent = `0/520`;
     registerBtn.classList.add("is-disabled");
+    loader.css("display", "none");
   });
 
   // Define handleSubscription function outside the loop
@@ -1232,6 +1235,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listener for form submission
   registerForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    loader.css("display", "flex");
 
     const slug = registerForm.getAttribute("data-slug");
     const name = registerForm.getAttribute("data-name");
@@ -1265,10 +1269,12 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((responseData) => {
           console.log("Response Data:", responseData);
+          loader.css("display", "none");
         })
         .catch((error) => {
           alert("Не вдалось надіслати відгук на вебхук");
           console.error("Error:", error);
+          loader.css("display", "none");
         });
     }
   });
