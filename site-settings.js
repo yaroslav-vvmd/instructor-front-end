@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const requestForm = $("#request-form");
-
+	const loader = $(".loader__wrapper");
   $('[wr-type="error"]').hide();
   $(".error").removeClass("error");
 
@@ -152,6 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Click on the Submit button
   $('[wr-type="submit"]').click(function (e) {
     formErrors = false; // Reset form error state before validation
+    loader.css("display", "flex");
 
     // Check each required field
     $('[wr-type="required-field"]').each(function () {
@@ -193,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (formErrors) {
       console.log(formErrors);
       e.preventDefault();
+      loader.css("display", "none");
     }
   });
 
@@ -455,7 +457,7 @@ const updateSubscriptionCounts = () => {
         isPhoneLinkClicked = false; // Reset after some time to avoid interference
       }, 300); // Adjust delay as necessary
     }
-  
+
   });
 
   window.addEventListener("beforeunload", (event) => {
