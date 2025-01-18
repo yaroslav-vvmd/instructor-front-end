@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const request_form = document.querySelector('.request-modal_form')
   const request_success = document.querySelector('.modal-request_success')
 	const loader = $(".loader__wrapper");
-
+  const char = $("#charCount");
   const request_modal_open = document.querySelector("#request-open-modal");
 
   if (request_modal_open) {
@@ -109,6 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     request_form.style.display = "block";
     request_form.reset();
     loader.css("display", "none");
+    char.text("0/520");
   });
 
   request_modal_close.addEventListener("click", function () {
@@ -117,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     request_form.style.display = "block";
     request_form.reset();
     loader.css("display", "none");
+    char.text("0/520");
   });
 });
 
