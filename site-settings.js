@@ -83,12 +83,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
   const request_modal = document.querySelector("#modal-request");
+
   const request_modal_overlay = document.querySelector(
     "#modal-request__overlay"
   );
   const request_modal_close = document.querySelector(
     "#testimonial-modal_close"
   );
+
+  const request_form = document.querySelector('.request-modal_form')
+  const request_success = document.querySelector('.modal-request_success')
+	const loader = $(".loader__wrapper");
+
   const request_modal_open = document.querySelector("#request-open-modal");
 
   if (request_modal_open) {
@@ -99,10 +105,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   request_modal_overlay.addEventListener("click", function () {
     request_modal.classList.remove("visible");
+    request_success.style.display = "none";
+    request_form.style.display = "block";
+    request_form.reset();
+    loader.css("display", "none");
   });
 
   request_modal_close.addEventListener("click", function () {
     request_modal.classList.remove("visible");
+    request_success.style.display = "none";
+    request_form.style.display = "block";
+    request_form.reset();
+    loader.css("display", "none");
   });
 });
 
