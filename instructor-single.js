@@ -647,12 +647,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Map to track processing state for each testimonial
+  const processingState = new Map();
+
   function likeTestimonial(testimonialId, reviewerId) {
     const userId = localStorage.getItem("uid");
     if (!userId) {
       openModal(login_modal);
       return;
     }
+
+    // Prevent double-tap: Check if the testimonial is being processed
+    if (processingState.get(testimonialId)) return;
+    processingState.set(testimonialId, true);
 
     fetch("https://instructor-backend.vercel.app/api/testimonials/like", {
       method: "POST",
@@ -707,6 +714,9 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch((error) => {
         console.error("Error liking testimonial:", error);
+      })
+      .finally(() => {
+        processingState.set(testimonialId, false); // Reset processing state
       });
   }
 
@@ -716,6 +726,10 @@ document.addEventListener("DOMContentLoaded", () => {
       openModal(login_modal);
       return;
     }
+
+    // Prevent double-tap: Check if the testimonial is being processed
+    if (processingState.get(testimonialId)) return;
+    processingState.set(testimonialId, true);
 
     fetch("https://instructor-backend.vercel.app/api/testimonials/dislike", {
       method: "POST",
@@ -772,8 +786,12 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch((error) => {
         console.error("Error disliking testimonial:", error);
+      })
+      .finally(() => {
+        processingState.set(testimonialId, false); // Reset processing state
       });
   }
+
 });
 
 document.addEventListener("DOMContentLoaded", () => {
