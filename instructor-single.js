@@ -1161,6 +1161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     commentField.value = "";
     charCount.textContent = `0/520`;
     registerBtn.classList.add("is-disabled");
+    loader.css("display", "none");
   });
 
   storageModalClose.addEventListener("click", () => {
@@ -1170,6 +1171,7 @@ document.addEventListener("DOMContentLoaded", () => {
     commentField.value = "";
     charCount.textContent = `0/520`;
     registerBtn.classList.add("is-disabled");
+    loader.css("display", "none");
   });
 
   registerClose.addEventListener("click", () => {
