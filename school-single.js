@@ -1508,10 +1508,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((responseData) => {
           console.log("Response Data:", responseData);
-          loader.css("display", "none");
         })
         .catch((error) => {
-          loader.css("display", "none");
           alert("Не вдалось надіслати відгук на вебхук");
           console.error("Error:", error);
         });
