@@ -459,28 +459,23 @@ const updateSubscriptionCounts = () => {
       localStorage.removeItem(reloadFlagKey); // Clear the reload flag
     } else {
       // Increment the active tabs only for new tabs
-      localStorage.setItem(
-        tabsKey,
-        (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-      );
+      const activeTabs = parseInt(localStorage.getItem(tabsKey) || "0") + 1;
+      localStorage.setItem(tabsKey, activeTabs.toString());
     }
   });
   
   // Handle beforeunload
   window.addEventListener("beforeunload", () => {
-    // Prevent decrement if a phone link is clicked
-    if (isPhoneLinkClicked) return;
+    if (isPhoneLinkClicked) return; // Skip decrement if phone link is clicked
   
     // Set the reload flag to detect if this is a reload
     localStorage.setItem(reloadFlagKey, "true");
   
     // Decrement active tabs
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    if (activeTabs >= 0) {
-      localStorage.setItem(tabsKey, activeTabs.toString());
-    }
+    localStorage.setItem(tabsKey, Math.max(activeTabs, 0).toString());
   
-    // Clear sessionKey only if all tabs are closed and this is not a reload
+    // If all tabs are closed, clear sessionKey
     if (activeTabs === 0) {
       setTimeout(() => {
         if (!localStorage.getItem(reloadFlagKey)) {
@@ -490,7 +485,7 @@ const updateSubscriptionCounts = () => {
     }
   });
   
-  // Check if the sessionKey exists, if not, initialize it
+  // Initialize sessionKey if it doesn't exist
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
       sessionKey,
@@ -506,7 +501,7 @@ const updateSubscriptionCounts = () => {
     if (target) {
       isPhoneLinkClicked = true; // Mark that the phone link was clicked
       setTimeout(() => {
-        isPhoneLinkClicked = false; // Reset after some time to avoid interference
+        isPhoneLinkClicked = false; // Reset after some time
       }, 300); // Adjust delay as necessary
     }
   });
@@ -514,7 +509,8 @@ const updateSubscriptionCounts = () => {
   // Utility functions to manage session data
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
-    localStorage.setItem(sessionKey, JSON.stringify(data));  
+    localStorage.setItem(sessionKey, JSON.stringify(data));
+  
 
   window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
