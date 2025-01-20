@@ -272,6 +272,7 @@
 
             confirmBtn.addEventListener('click', () => {
                 hideModal();
+                sessionStorage.setItem('doNotShowCityModal', true);
 
                 if (instructorsCitySelect) {
                     selectCity(instructorsCitySelect, cityName);
