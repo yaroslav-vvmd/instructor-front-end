@@ -185,6 +185,10 @@ document.addEventListener("DOMContentLoaded", () => {
         fieldError($(this), "Це поле є обов'язковим.");
       }
 
+      if($("#requestTextArea").val().length < 10 ){
+        fieldError($(this), "Потрібно ввести мінімум 10 символів.");
+      }
+
       // Email validation
       else if (
         $(this).attr("type") === "email" &&
