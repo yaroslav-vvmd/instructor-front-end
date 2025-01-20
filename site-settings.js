@@ -451,19 +451,21 @@ const updateSubscriptionCounts = () => {
   const tabsKey = "activeTabs"; // Key to track active tabs
   const reloadKey = "isPageReload"; // Key to track if the page is being reloaded
   
-  // Increment active tabs count in localStorage
-  localStorage.setItem(
-    tabsKey,
-    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-  );
+  // Increment active tabs count only if the tab isn't already registered
+  if (!sessionStorage.getItem(reloadKey)) {
+    sessionStorage.setItem(reloadKey, "true");
+  
+    // Increment active tabs count in localStorage
+    localStorage.setItem(
+      tabsKey,
+      (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+    );
+  }
   
   // Initialize session data if it doesn't exist
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(sessionKey, JSON.stringify({ subscribedServices: [] }));
   }
-  
-  // Set the reloadKey in sessionStorage for the current tab
-  sessionStorage.setItem(reloadKey, "true");
   
   let isPhoneLinkClicked = false;
   
@@ -483,19 +485,15 @@ const updateSubscriptionCounts = () => {
       return; // Skip decrementing active tabs
     }
   
-    // Check if the reloadKey exists in sessionStorage
-    const isReload = sessionStorage.getItem(reloadKey);
+    // Check if this tab was counted
+    if (sessionStorage.getItem(reloadKey)) {
+      sessionStorage.removeItem(reloadKey); // Remove the key for this tab
+      const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
+      localStorage.setItem(tabsKey, activeTabs.toString());
   
-    if (isReload) {
-      sessionStorage.removeItem(reloadKey); // Remove reload key for the next reload
-      return; // Skip decrementing active tabs and clearing sessionKey on reload
-    }
-  
-    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    localStorage.setItem(tabsKey, activeTabs.toString());
-  
-    if (activeTabs === 0) {
-      localStorage.removeItem(sessionKey);
+      if (activeTabs === 0) {
+        localStorage.removeItem(sessionKey); // Clear session if no tabs are active
+      }
     }
   });
   
@@ -503,6 +501,7 @@ const updateSubscriptionCounts = () => {
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
+  
   
 
   window.handleSubscription = async (slug, modal = false) => {
