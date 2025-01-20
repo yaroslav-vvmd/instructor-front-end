@@ -173,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentIndex = 0;
   const testimonialsToShow = 3;
   const loader = $(".loader__wrapper.is-single");
+  const loader2 = $(".loader__wrapper.is-testimonial");
   const empty = $(".testimonials_empty")
 
   if (slug) {
@@ -195,9 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
           form.addEventListener("submit", (event) => {
             event.preventDefault();
             event.stopPropagation();
-            document
-              .querySelector("#testimonial-modal")
-              .classList.remove("visible");
+            loader2.css("display", "flex");
 
             const userId = localStorage.getItem("uid");
 
@@ -252,6 +251,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (data.message) {
                   form.reset();
                   fetchTestimonials(cmsItemId, type);
+                  document
+                  .querySelector("#testimonial-modal")
+                  .classList.remove("visible");
+                  loader2.css("display", "none");
+    
                   fetch(
                     "https://events.sendpulse.com/events/name/insructor_review_school",
                     {
@@ -291,10 +295,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 } else {
                   console.error("Error submitting testimonial:", data.error);
+                  loader2.css("display", "none");
                 }
               })
               .catch((error) => {
                 console.error("Error submitting testimonial:", error);
+                loader2.css("display", "none");
               });
           });
         } else {
