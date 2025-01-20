@@ -230,11 +230,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const charCount = document.getElementById("charCount");
   textarea.addEventListener("input", () => {
     const currentLength = textarea.value.length;
-    if (currentLength > 520) {
-      charCount.style.color = "red"; // Red color when limit exceeded
-    } else {
-      charCount.style.color = "black"; // Reset color to black
-    }
     charCount.textContent = `${currentLength}/520`;
   });
 });

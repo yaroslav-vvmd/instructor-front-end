@@ -229,7 +229,7 @@
         const currentCity = _city || localStorage.getItem('currentCity');
         const citySlug = currentCity.split(' ').join('-');
         const cityOptions = citySelect.querySelectorAll('option');
-        let cityName = 'Київ';
+        let cityName = 'Kyiv';
 
         let pagePathname = window.location.pathname.toUpperCase();
 
@@ -252,12 +252,12 @@
 
                 // Step 1: Get userConfirmedCity, currentCity, or default to Kyiv
                 const userConfirmedCity = localStorage.getItem('userConfirmedCity');
-                const currentCity = userConfirmedCity || localStorage.getItem('currentCity') || 'Київ';
+                const currentCity = userConfirmedCity || localStorage.getItem('currentCity') || 'Kyiv';
 
                 // Step 2: Determine the city slug and find the city in dropdown options
                 const citySlug = slugifyCity(currentCity);
                 const cityOptions = citySelect.querySelectorAll('option');
-                let cityName = 'Київ'; // Default to Kyiv
+                let cityName = 'Kyiv'; // Default to Kyiv
 
                 cityOptions.forEach(option => {
                     if (option.value.toUpperCase().includes(citySlug.toUpperCase())) {
@@ -345,51 +345,51 @@
     };
 
     const getUserCity = async () => {
-    console.log('');
-    console.log('/ ----------- Визначення міста: Start ----------- /');
+        console.log('');
+        console.log('/ ----------- Визначення міста: Start ----------- /');
 
-    const storageUserData = localStorage.getItem('userData');
-    const doNotShowCityModal = sessionStorage.getItem('doNotShowCityModal');
-    let userCity = storageUserData ? JSON.parse(storageUserData).city?.trim() : null;
+        const storageUserData = localStorage.getItem('userData');
+        const doNotShowCityModal = sessionStorage.getItem('doNotShowCityModal');
+        let userCity = storageUserData ? JSON.parse(storageUserData).city?.trim() : null;
 
-    if (userCity) {
-        console.log('Місто береться з userData: ', userCity);
-        localStorage.setItem('userConfirmedCity', userCity);
-        updateCityInfo(userCity, false); // Always prioritize userData.city
-        updateLinksWithCity(slugifyCity(userCity));
-    } else if (!doNotShowCityModal) {
-        // Fetch location if modal can be shown
-        await getLocation();
-        const newCityFromIP = localStorage.getItem('currentCity');
-        const citySelect = document.querySelector('[data-city-select="schools"]') ||
-            document.querySelector('[data-city-select="instructors"]');
-        const cityOptions = citySelect?.querySelectorAll('option') || [];
+        if (userCity) {
+            console.log('Місто береться з userData: ', userCity);
+            localStorage.setItem('userConfirmedCity', userCity);
+            updateCityInfo(userCity, false); // Always prioritize userData.city
+            updateLinksWithCity(slugifyCity(userCity));
+        } else if (!doNotShowCityModal) {
+            // Fetch location if modal can be shown
+            await getLocation();
+            const newCityFromIP = localStorage.getItem('currentCity');
+            const citySelect = document.querySelector('[data-city-select="schools"]') ||
+                document.querySelector('[data-city-select="instructors"]');
+            const cityOptions = citySelect?.querySelectorAll('option') || [];
 
-        const cityExists = Array.from(cityOptions).some(option =>
-            option.value.toUpperCase().includes(newCityFromIP?.toUpperCase())
-        );
+            const cityExists = Array.from(cityOptions).some(option =>
+                option.value.toUpperCase().includes(newCityFromIP?.toUpperCase())
+            );
 
-        if (cityExists && newCityFromIP) {
-            console.log('Вибране місто по IP: ', newCityFromIP);
-            updateCityInfo(newCityFromIP);
-            updateLinksWithCity(slugifyCity(newCityFromIP)); // Update links
+            if (cityExists && newCityFromIP) {
+                console.log('Вибране місто по IP: ', newCityFromIP);
+                updateCityInfo(newCityFromIP);
+                updateLinksWithCity(slugifyCity(newCityFromIP)); // Update links
+            } else {
+                console.log('Місто по IP не знайдено в базі даних');
+                const fallbackCity = 'Kyiv';
+                updateCityInfo(fallbackCity, false); // Fallback to default
+                updateLinksWithCity(slugifyCity(fallbackCity)); // Update links
+            }
         } else {
-            console.log('Місто по IP не знайдено в базі даних');
-            const fallbackCity = 'Київ';
-            updateCityInfo(fallbackCity, false); // Fallback to default
-            updateLinksWithCity(slugifyCity(fallbackCity)); // Update links
+            // Handle the case where modal is suppressed but dropdown needs to update
+            const fallbackCity = userCity || localStorage.getItem('currentCity') || 'Kyiv';
+            console.log('Updating dropdown without modal:', fallbackCity);
+            updateCityInfo(fallbackCity, false);
+            updateLinksWithCity(slugifyCity(fallbackCity));
         }
-    } else {
-        // Handle the case where modal is suppressed but dropdown needs to update
-        const fallbackCity = userCity || localStorage.getItem('currentCity') || 'Київ';
-        console.log('Updating dropdown without modal:', fallbackCity);
-        updateCityInfo(fallbackCity, false);
-        updateLinksWithCity(slugifyCity(fallbackCity));
-    }
 
-    console.log('/ ----------- Визначення міста: End ----------- /');
-    console.log('');
-};
+        console.log('/ ----------- Визначення міста: End ----------- /');
+        console.log('');
+    };
 
 
 
