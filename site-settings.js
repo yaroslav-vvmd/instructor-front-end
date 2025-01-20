@@ -145,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const requestForm = $("#request-form");
 	const loader = $(".loader__wrapper");
   $('[wr-type="error"]').hide();
   $(".error").removeClass("error");
@@ -207,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // If errors found, prevent form submission
-    if (formErrors) {
+    if (formErrors && document.getElementById("requestTextArea").value.length < 10 ) {
       console.log(formErrors);
       e.preventDefault();
       loader.css("display", "none");
