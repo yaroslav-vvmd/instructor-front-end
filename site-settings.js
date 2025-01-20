@@ -493,7 +493,7 @@ const updateSubscriptionCounts = () => {
     }
 
     // Check if this tab was counted
-    if (sessionStorage.getItem(reloadKey)) {
+    if (!sessionStorage.getItem(reloadKey)) {
       sessionStorage.removeItem(reloadKey); // Remove the key for this tab
       const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
       localStorage.setItem(tabsKey, activeTabs.toString());
