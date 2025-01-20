@@ -318,6 +318,8 @@ document.addEventListener("DOMContentLoaded", () => {
     )
       .then((response) => {
         if (response.status === 404) {
+          loader.css("display", "none");
+          empty.css("display", "flex");
           throw new Error("No testimonials found");
         }
         return response.json();

@@ -319,6 +319,8 @@ document.addEventListener("DOMContentLoaded", () => {
     )
       .then((response) => {
         if (response.status === 404) {
+          loader.css("display", "none");
+          empty.css("display", "flex");
           throw new Error("No testimonials found");
         }
         return response.json();
@@ -1377,7 +1379,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (userData.email) emailField.value = userData.email;
     phoneField.value = localStorage.getItem("uid") || "";
   }
-	const loader = $(".loader__wrapper.is-register");
+  const loader = $(".loader__wrapper.is-register");
   const serviceItems = document.querySelectorAll(".instructor_services-item");
   const registerModal = document.getElementById("registration-modal");
   const registerForm = document.getElementById("registration-form");
