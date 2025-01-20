@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // If errors found, prevent form submission
-    if (formErrors && document.getElementById("requestTextArea").value.length > 9 ) {
+    if (formErrors && document.getElementById("requestTextArea").value.length < 10 ) {
       console.log(formErrors);
       e.preventDefault();
       loader.css("display", "none");
