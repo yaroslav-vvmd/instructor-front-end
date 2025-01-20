@@ -450,67 +450,48 @@ const updateSubscriptionCounts = () => {
     });
   }
 
-  const reloadFlagKey = "isReloading";
-  
-  // Handle page load
-  window.addEventListener("load", () => {
-    // Check if this is a reload and avoid incrementing
-    if (localStorage.getItem(reloadFlagKey)) {
-      localStorage.removeItem(reloadFlagKey); // Clear the reload flag
-    } else {
-      // Increment the active tabs only for new tabs
-      const activeTabs = parseInt(localStorage.getItem(tabsKey) || "0") + 1;
-      localStorage.setItem(tabsKey, activeTabs.toString());
-    }
-  });
-  
-  // Handle beforeunload
-  window.addEventListener("beforeunload", () => {
-    if (isPhoneLinkClicked) return; // Skip decrement if phone link is clicked
-  
-    // Set the reload flag to detect if this is a reload
-    localStorage.setItem(reloadFlagKey, "true");
-  
-    // Decrement active tabs
-    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    localStorage.setItem(tabsKey, Math.max(activeTabs, 0).toString());
-  
-    // If all tabs are closed, clear sessionKey
-    if (activeTabs === 0) {
-      setTimeout(() => {
-        if (!localStorage.getItem(reloadFlagKey)) {
-          localStorage.removeItem(sessionKey);
-        }
-      }, 500); // Small delay to confirm no reload
-    }
-  });
-  
-  // Initialize sessionKey if it doesn't exist
+  localStorage.setItem(
+    tabsKey,
+    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+  );
+
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
       sessionKey,
       JSON.stringify({ subscribedServices: [] })
     );
   }
-  
+
   let isPhoneLinkClicked = false;
-  
+
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
     if (target) {
       isPhoneLinkClicked = true; // Mark that the phone link was clicked
       setTimeout(() => {
-        isPhoneLinkClicked = false; // Reset after some time
+        isPhoneLinkClicked = false; // Reset after some time to avoid interference
       }, 300); // Adjust delay as necessary
     }
+
   });
-  
-  // Utility functions to manage session data
+
+  window.addEventListener("beforeunload", (event) => {
+    if (isPhoneLinkClicked) {
+      return; // Skip decrementing active tabs
+    }
+
+    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
+    localStorage.setItem(tabsKey, activeTabs.toString());
+
+    if (activeTabs == 0) {
+      localStorage.removeItem(sessionKey);
+    }
+  });
+
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
-  
 
   window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
