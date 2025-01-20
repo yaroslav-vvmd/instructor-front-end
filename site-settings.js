@@ -91,9 +91,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "#testimonial-modal_close"
   );
 
-  const request_form = document.querySelector('.request-modal_form')
-  const request_success = document.querySelector('.modal-request_success')
-	const loader = $(".loader__wrapper");
+  const request_form = document.querySelector(".request-modal_form");
+  const request_success = document.querySelector(".modal-request_success");
+  const loader = $(".loader__wrapper");
   const char = $("#charCount");
   const request_modal_open = document.querySelector("#request-open-modal");
 
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-	const loader = $(".loader__wrapper");
+  const loader = $(".loader__wrapper");
   $('[wr-type="error"]').hide();
   $(".error").removeClass("error");
 
@@ -180,13 +180,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      if ($("#requestTextArea").val().trim().length < 10) {
+        fieldError(
+          $("#requestTextArea"),
+          "Потрібно ввести мінімум 10 символів."
+        );
+      }
+
       // Text field validation
       if ($(this).val().length === 0) {
         fieldError($(this), "Це поле є обов'язковим.");
-      }
-
-      if($("#requestTextArea").val().length < 10 ){
-        fieldError($(this), "Потрібно ввести мінімум 10 символів.");
       }
 
       // Email validation
@@ -210,7 +213,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // If errors found, prevent form submission
-    if (formErrors || document.getElementById("requestTextArea").value.length < 10 ) {
+    if (
+      formErrors ||
+      document.getElementById("requestTextArea").value.length < 10
+    ) {
       console.log(formErrors);
       e.preventDefault();
       loader.css("display", "none");
@@ -448,25 +454,28 @@ const updateSubscriptionCounts = () => {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
   const reloadKey = "isPageReload"; // Key to track if the page is being reloaded
-  
+
   // Increment active tabs count only if the tab isn't already registered
   if (!sessionStorage.getItem(reloadKey)) {
     sessionStorage.setItem(reloadKey, "true");
-  
+
     // Increment active tabs count in localStorage
     localStorage.setItem(
       tabsKey,
       (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
     );
   }
-  
+
   // Initialize session data if it doesn't exist
   if (!localStorage.getItem(sessionKey)) {
-    localStorage.setItem(sessionKey, JSON.stringify({ subscribedServices: [] }));
+    localStorage.setItem(
+      sessionKey,
+      JSON.stringify({ subscribedServices: [] })
+    );
   }
-  
+
   let isPhoneLinkClicked = false;
-  
+
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
@@ -477,30 +486,28 @@ const updateSubscriptionCounts = () => {
       }, 300); // Adjust delay as necessary
     }
   });
-  
+
   window.addEventListener("beforeunload", () => {
     if (isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
-  
+
     // Check if this tab was counted
     if (sessionStorage.getItem(reloadKey)) {
       sessionStorage.removeItem(reloadKey); // Remove the key for this tab
       const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
       localStorage.setItem(tabsKey, activeTabs.toString());
-  
+
       if (activeTabs === 0) {
         localStorage.removeItem(sessionKey); // Clear session if no tabs are active
       }
     }
   });
-  
+
   // Helper functions to get and update session
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
-  
-  
 
   window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
