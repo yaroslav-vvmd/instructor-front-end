@@ -450,11 +450,47 @@ const updateSubscriptionCounts = () => {
     });
   }
 
-  localStorage.setItem(
-    tabsKey,
-    (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
-  );
+  const reloadFlagKey = "isReloading";
   
+  // Handle page load
+  window.addEventListener("load", () => {
+    // If the reload flag is set, clear it and do not increment
+    if (localStorage.getItem(reloadFlagKey)) {
+      localStorage.removeItem(reloadFlagKey);
+    } else {
+      // Increment active tabs only if it's not a reload
+      localStorage.setItem(
+        tabsKey,
+        (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
+      );
+    }
+  });
+  
+  // Handle beforeunload
+  window.addEventListener("beforeunload", () => {
+    if (isPhoneLinkClicked) {
+      return; // Skip decrementing for phone link clicks
+    }
+  
+    // Set reload flag before unload
+    localStorage.setItem(reloadFlagKey, "true");
+  
+    // Decrement active tabs
+    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
+    localStorage.setItem(tabsKey, activeTabs.toString());
+  
+    // Only clear sessionKey if this is the last active tab
+    if (activeTabs === 0) {
+      setTimeout(() => {
+        // Clear sessionKey only if reload flag is not present
+        if (!localStorage.getItem(reloadFlagKey)) {
+          localStorage.removeItem(sessionKey);
+        }
+      }, 500); // Add a slight delay to handle reloads
+    }
+  });
+  
+  // Check if the sessionKey exists, if not, initialize it
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
       sessionKey,
@@ -475,35 +511,11 @@ const updateSubscriptionCounts = () => {
     }
   });
   
-  // Handle tab visibility change
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === 'hidden') {
-      const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-      localStorage.setItem(tabsKey, activeTabs.toString());
-  
-      // Check if this is the last active tab
-      if (activeTabs === 0) {
-        localStorage.removeItem(sessionKey);
-      }
-    }
-  });
-  
-  // Handle beforeunload event
-  window.addEventListener("beforeunload", (event) => {
-    if (isPhoneLinkClicked) {
-      return; // Skip decrementing active tabs
-    }
-  
-    // Prevent decrementing on reload
-    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1");
-    if (activeTabs > 0) {
-      localStorage.setItem(tabsKey, activeTabs.toString());
-    }
-  });
-  
+  // Utility functions to manage session data
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));
+  
 
   window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
