@@ -454,16 +454,16 @@ const updateSubscriptionCounts = () => {
     tabsKey,
     (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
   );
-
+  
   if (!localStorage.getItem(sessionKey)) {
     localStorage.setItem(
       sessionKey,
       JSON.stringify({ subscribedServices: [] })
     );
   }
-
+  
   let isPhoneLinkClicked = false;
-
+  
   // Detect clicks on phone links and prevent unload decrement
   document.addEventListener("click", (event) => {
     const target = event.target.closest("a[href^='tel:']");
@@ -473,22 +473,34 @@ const updateSubscriptionCounts = () => {
         isPhoneLinkClicked = false; // Reset after some time to avoid interference
       }, 300); // Adjust delay as necessary
     }
-
   });
-
+  
+  // Handle tab visibility change
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === 'hidden') {
+      const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
+      localStorage.setItem(tabsKey, activeTabs.toString());
+  
+      // Check if this is the last active tab
+      if (activeTabs === 0) {
+        localStorage.removeItem(sessionKey);
+      }
+    }
+  });
+  
+  // Handle beforeunload event
   window.addEventListener("beforeunload", (event) => {
     if (isPhoneLinkClicked) {
       return; // Skip decrementing active tabs
     }
-
-    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    localStorage.setItem(tabsKey, activeTabs.toString());
-
-    if (activeTabs == 0) {
-      localStorage.removeItem(sessionKey);
+  
+    // Prevent decrementing on reload
+    const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1");
+    if (activeTabs > 0) {
+      localStorage.setItem(tabsKey, activeTabs.toString());
     }
   });
-
+  
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
     localStorage.setItem(sessionKey, JSON.stringify(data));

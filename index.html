@@ -1,0 +1,463 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W89SWKCG" height="0" width="0"
+        style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"
+    integrity="sha512-KFHXdr2oObHKI9w4Hv1XPKc898mE4kgYx58oqsc/JqqdLMDI4YjOLzom+EMlW8HFUd0QfjfAvxSL6sEq/a42fQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"
+    integrity="sha512-efAcjYoYT0sXxQRtxGY37CKYmqsFVOIwMApaEbrxJr4RwqVVGw8o+Lfh/+59TU07+suZn1BWq4fDl5fdgyCNkw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDCYeAn0HZAcwKGc11tQiUn52fC_l3MPEs",
+        authDomain: "instructor-feb0c.firebaseapp.com",
+        projectId: "instructor-feb0c",
+        storageBucket: "instructor-feb0c.appspot.com",
+        messagingSenderId: "197967930036",
+        appId: "1:197967930036:web:b4523d7819e9759288ade1 ",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app); // Get the auth object
+    const db = getFirestore(app);
+    window.auth = auth;
+
+    const showHeaderButton = (isAuth) => {
+        if (isAuth) {
+            $('#login-btn').addClass("hidden");
+            $('#login-mobile-btn').addClass("hidden");
+            $('#logout-btn').removeClass("hidden");
+            $('#logout-mobile-btn').removeClass("hidden");
+            $('#logout-btn').addClass("visible");
+            $('#logout-mobile-btn').addClass("visible");
+            $('#user-controls').addClass("visible");
+            $('#profile-link').addClass("visible");
+
+        } else {
+            $('#logout-btn').addClass("hidden");
+            $('#logout-mobile-btn').addClass("hidden");
+            $('#login-btn').removeClass("hidden");
+            $('#login-mobile-btn').removeClass("hidden");
+            $('#login-btn').addClass("visible");
+            $('#login-mobile-btn').addClass("visible");
+            $('#user-controls').removeClass("visible");
+            $('#profile-link').removeClass("visible");
+
+        }
+    };
+
+    onAuthStateChanged(auth, async (user) => {
+        const isAuth = !!user;
+        showHeaderButton(isAuth);
+
+        if (!isAuth) {
+            localStorage.removeItem("uid");
+            localStorage.removeItem("userData");
+            await getUserCity();
+            return;
+        }
+
+        localStorage.setItem("uid", user.uid);
+
+        const userDocRef = doc(db, "users", user.uid);
+
+        try {
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const firstName = userData.firstName || "";
+                const lastName = userData.lastName || "";
+                const email = userData.email || "";
+                const role_autoschool = userData.role_autoschool || "";
+                const role_instructor = userData.role_instructor || "";
+                const newsletter = userData.newsletter || "";
+                const city = userData.city || "";
+
+                const userDataObject = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    role_instructor: role_instructor,
+                    role_autoschool: role_autoschool,
+                    newsletter: newsletter,
+                    city: city,
+                };
+                localStorage.setItem("userData", JSON.stringify(userDataObject));
+                document.querySelector('.user-controls_name').textContent = firstName + ' ' + lastName;
+            } else {
+                console.log("No such document!");
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+
+        getUserCity();
+    });
+
+
+    const currentPath = window.location.pathname;
+
+    // Extract the city from the path (e.g., 'city-dnipro')
+    const citySegment = currentPath.split('/').find(segment => segment.startsWith('city-'));
+    const userCity = localStorage.getItem('currentCity') || "kyiv"; // Default to Kyiv if no city
+
+    const slugifyCity = (city) => city.split(' ').join('-').toLowerCase();
+
+    const updateLinksWithCity = (citySlug) => {
+        // Construct the base URLs dynamically
+        const currentDomain = window.location.origin;
+        const instructorsBaseURL = `${currentDomain}/instructors`;
+        const autoschoolsBaseURL = `${currentDomain}/driving-schools`;
+
+        // Define the query parameters for each link
+        const instructorsQueryParams = "?categories=B&courses=Урок+з+водіння";
+        const autoschoolsQueryParams = "?categories=B&courses=Повний+курс";
+
+        // Update the #instructors-link
+        const instructorsLink = document.getElementById("instructors-link");
+        if (instructorsLink) {
+            instructorsLink.href = `${instructorsBaseURL}/city-${citySlug}${instructorsQueryParams}`;
+        }
+
+        // Update the #autschools-link
+        const autoschoolsLink = document.getElementById("autschools-link");
+        if (autoschoolsLink) {
+            autoschoolsLink.href = `${autoschoolsBaseURL}/city-${citySlug}${autoschoolsQueryParams}`;
+        }
+    };
+
+    if (citySegment) {
+        const detectedCitySlug = citySegment.replace('city-', '');
+        updateLinksWithCity(detectedCitySlug);
+    } else {
+        const citySlug = slugifyCity(userCity);
+        updateLinksWithCity(citySlug);
+    }
+
+    function updateUserCity(_city) {
+        const uid = localStorage.getItem('uid');
+
+        if (!uid) {
+            console.error('Помилка: користувач не авторизований');
+            return;
+        }
+
+        fetch("https://instructor-back-end.vercel.app/update-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                uid: uid,
+                city: _city
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Помилка:', error);
+            });
+    }
+
+    const updateCityInfo = (_city, _showCityModal = true) => {
+        const cityTextElements = document.querySelectorAll('[data-current-city-text]');
+        const instructorsCitySelect = document.querySelector('[data-city-select="instructors"]');
+        const schoolsCitySelect = document.querySelector('[data-city-select="schools"]');
+        const citySelect = schoolsCitySelect ? schoolsCitySelect : instructorsCitySelect;
+        const cityModal = document.getElementById('city-modal');
+        const rejectBtn = document.getElementById('city-modal-reject-btn');
+        const confirmBtn = document.getElementById('city-modal-confirm-btn');
+
+        if (!citySelect) {
+            console.warn('Немає селекту з містами');
+            return;
+        }
+
+        const hideModal = () => {
+            cityModal?.classList.add('is-disappear');
+            setTimeout(() => {
+                cityModal?.classList.remove('is-disappear');
+                cityModal?.classList.remove('is-visible');
+            }, 400);
+        };
+
+        const selectCity = (_citySelect, _cityName) => {
+            const linkTextEls = _citySelect.querySelectorAll('.select_link-text');
+            const toggle = _citySelect.querySelector('.w-dropdown-toggle');
+            const list = _citySelect.querySelector('.w-dropdown-list');
+            const arrowIcon = _citySelect.querySelector('.arrow-icon');
+
+            linkTextEls.forEach(linkText => {
+                if (linkText.textContent.trim().toUpperCase() === _cityName.toUpperCase()) {
+                    toggle.classList.add('is-unfocused');
+                    const parentItem = linkText.closest('.select_item');
+                    if (window.location.pathname === "/") {
+                        parentItem?.click();
+                    }
+                    setTimeout(() => {
+                        toggle.classList.remove('w--open');
+                        toggle.setAttribute('aria-expanded', 'false');
+                        list.classList.remove('w--open');
+                        toggle?.blur();
+                    }, 10);
+                    setTimeout(() => {
+                        toggle.classList.remove('is-unfocused');
+                    }, 1000);
+                }
+            });
+        };
+
+        const currentCity = _city || localStorage.getItem('currentCity');
+        const citySlug = currentCity.split(' ').join('-');
+        const cityOptions = citySelect.querySelectorAll('option');
+        let cityName = 'Київ';
+
+        let pagePathname = window.location.pathname.toUpperCase();
+
+        cityOptions.forEach(option => {
+            if (option.value.toUpperCase().includes(citySlug.toUpperCase())) {
+                cityName = option.innerText;
+                return;
+            }
+        });
+
+        if (_showCityModal && cityModal) {
+            cityTextElements.forEach(element => {
+                element.textContent = cityName;
+                cityModal?.classList.add('is-visible');
+            });
+
+            rejectBtn.addEventListener('click', () => {
+                hideModal();
+                sessionStorage.setItem('doNotShowCityModal', true);
+
+                // Step 1: Get userConfirmedCity, currentCity, or default to Kyiv
+                const userConfirmedCity = localStorage.getItem('userConfirmedCity');
+                const currentCity = userConfirmedCity || localStorage.getItem('currentCity') || 'Київ';
+
+                // Step 2: Determine the city slug and find the city in dropdown options
+                const citySlug = slugifyCity(currentCity);
+                const cityOptions = citySelect.querySelectorAll('option');
+                let cityName = 'Київ'; // Default to Kyiv
+
+                cityOptions.forEach(option => {
+                    if (option.value.toUpperCase().includes(citySlug.toUpperCase())) {
+                        cityName = option.innerText;
+                    }
+                });
+
+                // Step 3: Update dropdown with the resolved city
+                selectCity(citySelect, cityName);
+                console.log('City updated after reject:', cityName);
+            });
+
+            confirmBtn.addEventListener('click', () => {
+                hideModal();
+
+                if (instructorsCitySelect) {
+                    selectCity(instructorsCitySelect, cityName);
+                }
+
+                if (schoolsCitySelect) {
+                    selectCity(schoolsCitySelect, cityName);
+                }
+
+                updateUserCity(currentCity);
+
+                localStorage.setItem('currentCity', currentCity);
+
+                const citySlug = currentCity.split(' ').join('-').toLowerCase(); // Example: "Vinnicya Leninskiy" -> "vinnicya-leninskiy"
+
+                // Determine the type of redirection
+                let newUrl = '';
+                const basePath = window.location.origin; // Get the base domain, e.g., "https://instructor-stage.webflow.io"
+
+                if (schoolsCitySelect) {
+                    newUrl = `${basePath}/driving-schools/city-${citySlug}?categories=B&courses=Повний+курс`;
+                } else if (instructorsCitySelect) {
+                    newUrl = `${basePath}/instructors/city-${citySlug}?categories=B&courses=Урок+з+водіння`;
+                }
+
+                // Redirect the user to the appropriate URL
+                if (newUrl) {
+                    setTimeout(() => {
+                        window.location.href = newUrl;
+                    }, 300)
+                }
+
+            });
+
+        } else if (!pagePathname.includes(citySlug.toUpperCase()) && !pagePathname.includes('CITY-')) {
+            if (instructorsCitySelect) {
+                selectCity(instructorsCitySelect, cityName);
+            }
+            if (schoolsCitySelect) {
+                selectCity(schoolsCitySelect, cityName);
+            }
+            localStorage.setItem('currentCity', currentCity);
+        }
+    };
+
+    const getLocation = async () => {
+        try {
+            let userIp = null;
+
+            const ipResponse = await fetch("https://api.ipify.org?format=json");
+            if (!ipResponse.ok) throw new Error('IP fetch failed');
+
+            const { ip } = await ipResponse.json();
+            userIp = ip;
+
+            console.log('IP: ' + userIp);
+
+            const response = await fetch(`https://instructor-back-end.vercel.app/location?ip=${userIp}`);
+            if (!response.ok) throw new Error('Location fetch failed');
+
+            const data = await response.json();
+            const { city } = data?.location || {};
+
+            if (city) {
+                localStorage.setItem('currentCity', city);
+            }
+        } catch (error) {
+            console.error('Error fetching location data:', error.message);
+        }
+    };
+
+    const getUserCity = async () => {
+    console.log('');
+    console.log('/ ----------- Визначення міста: Start ----------- /');
+
+    const storageUserData = localStorage.getItem('userData');
+    const doNotShowCityModal = sessionStorage.getItem('doNotShowCityModal');
+    let userCity = storageUserData ? JSON.parse(storageUserData).city?.trim() : null;
+
+    if (userCity) {
+        console.log('Місто береться з userData: ', userCity);
+        localStorage.setItem('userConfirmedCity', userCity);
+        updateCityInfo(userCity, false); // Always prioritize userData.city
+        updateLinksWithCity(slugifyCity(userCity));
+    } else if (!doNotShowCityModal) {
+        // Fetch location if modal can be shown
+        await getLocation();
+        const newCityFromIP = localStorage.getItem('currentCity');
+        const citySelect = document.querySelector('[data-city-select="schools"]') ||
+            document.querySelector('[data-city-select="instructors"]');
+        const cityOptions = citySelect?.querySelectorAll('option') || [];
+
+        const cityExists = Array.from(cityOptions).some(option =>
+            option.value.toUpperCase().includes(newCityFromIP?.toUpperCase())
+        );
+
+        if (cityExists && newCityFromIP) {
+            console.log('Вибране місто по IP: ', newCityFromIP);
+            updateCityInfo(newCityFromIP);
+            updateLinksWithCity(slugifyCity(newCityFromIP)); // Update links
+        } else {
+            console.log('Місто по IP не знайдено в базі даних');
+            const fallbackCity = 'Київ';
+            updateCityInfo(fallbackCity, false); // Fallback to default
+            updateLinksWithCity(slugifyCity(fallbackCity)); // Update links
+        }
+    } else {
+        // Handle the case where modal is suppressed but dropdown needs to update
+        const fallbackCity = userCity || localStorage.getItem('currentCity') || 'Київ';
+        console.log('Updating dropdown without modal:', fallbackCity);
+        updateCityInfo(fallbackCity, false);
+        updateLinksWithCity(slugifyCity(fallbackCity));
+    }
+
+    console.log('/ ----------- Визначення міста: End ----------- /');
+    console.log('');
+};
+
+
+
+
+</script>
+
+<script>
+    function updateUserControlsName() {
+        const userData = localStorage.getItem("userData");
+
+        if (userData) {
+            try {
+                // Show/hide appropriate buttons
+                $('#login-btn').addClass("hidden");
+                $('#login-mobile-btn').addClass("hidden");
+                $('#logout-btn').removeClass("hidden").addClass("visible");
+                $('#logout-mobile-btn').removeClass("hidden").addClass("visible");
+                $('#user-controls').addClass("visible");
+                $('#profile-link').addClass("visible");
+
+                const userDataObject = JSON.parse(userData);
+                const { firstName, lastName } = userDataObject;
+
+                if (firstName && lastName) {
+                    const userNameElement = document.querySelector('.user-controls_name');
+
+                    if (userNameElement) {
+                        // Set initial width to current width
+                        userNameElement.style.width = userNameElement.offsetWidth + "px";
+
+                        // Temporarily set the width to auto to measure new content size
+                        userNameElement.style.transition = "width 0.5s ease";
+                        userNameElement.textContent = `${firstName} ${lastName}`;
+                        userNameElement.style.width = "auto";
+
+                        // Use reflow to calculate the new width
+                        const newWidth = userNameElement.scrollWidth + "px";
+
+                        requestAnimationFrame(() => {
+                            userNameElement.style.width = newWidth; // Apply the new width smoothly
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error parsing userData from localStorage:", error);
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", updateUserControlsName);
+</script>
+
+
+<script type="module">
+    import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    const logOut = async () => {
+        await signOut(window.auth).then(() => {
+            window.location.href = `https://${window.location.hostname}`;
+            console.log("Користувач успішно вийшов з системи");
+        }).catch((error) => {
+            console.error("Помилка при виході з системи:", error);
+        })
+    }
+
+    $('#logout-btn').on("click", logOut);
+    $('#logout-mobile-btn').on("click", logOut);
+    $('#logout-modal-confirm').on("click", logOut);
+</script>
+
+
+<script src="https://yaroslav-vvmd.github.io/instructor-front-end/site-settings.js"></script>
