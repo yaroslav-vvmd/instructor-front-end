@@ -454,11 +454,11 @@ const updateSubscriptionCounts = () => {
   
   // Handle page load
   window.addEventListener("load", () => {
-    // If the reload flag is set, clear it and do not increment
+    // Check if this is a reload and avoid incrementing
     if (localStorage.getItem(reloadFlagKey)) {
-      localStorage.removeItem(reloadFlagKey);
+      localStorage.removeItem(reloadFlagKey); // Clear the reload flag
     } else {
-      // Increment active tabs only if it's not a reload
+      // Increment the active tabs only for new tabs
       localStorage.setItem(
         tabsKey,
         (parseInt(localStorage.getItem(tabsKey) || "0") + 1).toString()
@@ -468,25 +468,25 @@ const updateSubscriptionCounts = () => {
   
   // Handle beforeunload
   window.addEventListener("beforeunload", () => {
-    if (isPhoneLinkClicked) {
-      return; // Skip decrementing for phone link clicks
-    }
+    // Prevent decrement if a phone link is clicked
+    if (isPhoneLinkClicked) return;
   
-    // Set reload flag before unload
+    // Set the reload flag to detect if this is a reload
     localStorage.setItem(reloadFlagKey, "true");
   
     // Decrement active tabs
     const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
-    localStorage.setItem(tabsKey, activeTabs.toString());
+    if (activeTabs >= 0) {
+      localStorage.setItem(tabsKey, activeTabs.toString());
+    }
   
-    // Only clear sessionKey if this is the last active tab
+    // Clear sessionKey only if all tabs are closed and this is not a reload
     if (activeTabs === 0) {
       setTimeout(() => {
-        // Clear sessionKey only if reload flag is not present
         if (!localStorage.getItem(reloadFlagKey)) {
           localStorage.removeItem(sessionKey);
         }
-      }, 500); // Add a slight delay to handle reloads
+      }, 500); // Small delay to confirm no reload
     }
   });
   
@@ -514,8 +514,7 @@ const updateSubscriptionCounts = () => {
   // Utility functions to manage session data
   const getSession = () => JSON.parse(localStorage.getItem(sessionKey));
   const updateSession = (data) =>
-    localStorage.setItem(sessionKey, JSON.stringify(data));
-  
+    localStorage.setItem(sessionKey, JSON.stringify(data));  
 
   window.handleSubscription = async (slug, modal = false) => {
     const session = getSession();
