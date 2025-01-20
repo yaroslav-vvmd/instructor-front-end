@@ -454,6 +454,7 @@ const updateSubscriptionCounts = () => {
   const sessionKey = "sharedSession"; // Key to track the session
   const tabsKey = "activeTabs"; // Key to track active tabs
   const reloadKey = "isPageReload"; // Key to track if the page is being reloaded
+  const phoneLinkKey = "phoneLinkClicked"; // To track phone link clicks across events
 
   // Increment active tabs count only if the tab isn't already registered
   if (!sessionStorage.getItem(reloadKey)) {
@@ -481,24 +482,27 @@ const updateSubscriptionCounts = () => {
     const target = event.target.closest("a[href^='tel:']");
     if (target) {
       isPhoneLinkClicked = true; // Mark that the phone link was clicked
+      localStorage.setItem(phoneLinkKey, "true");
       setTimeout(() => {
         isPhoneLinkClicked = false; // Reset after some time to avoid interference
+        localStorage.removeItem(phoneLinkKey); // Clear the phone link flag
       }, 300); // Adjust delay as necessary
     }
   });
 
-  window.addEventListener("beforeunload", () => {
-    if (isPhoneLinkClicked) {
-      return; // Skip decrementing active tabs
+  // Listen for `pagehide` instead of `beforeunload`
+  window.addEventListener("pagehide", () => {
+    if (localStorage.getItem(phoneLinkKey)) {
+      return; // Skip decrementing active tabs if a phone link was clicked
     }
 
     // Check if this tab was counted
-    if (!sessionStorage.getItem(reloadKey)) {
+    if (sessionStorage.getItem(reloadKey)) {
       sessionStorage.removeItem(reloadKey); // Remove the key for this tab
       const activeTabs = parseInt(localStorage.getItem(tabsKey) || "1") - 1;
       localStorage.setItem(tabsKey, activeTabs.toString());
 
-      if (activeTabs === 0) {
+      if (activeTabs <= 0) {
         localStorage.removeItem(sessionKey); // Clear session if no tabs are active
       }
     }
