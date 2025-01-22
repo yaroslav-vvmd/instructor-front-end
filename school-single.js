@@ -864,10 +864,6 @@ document.addEventListener("DOMContentLoaded", () => {
         clickable: true,
       },
     });
-    updateCounter(
-      document.querySelector("#teory-list"),
-      ".instructors-swiper_counter"
-    );
   }
 
   const practicalList = document.querySelector(
@@ -893,6 +889,11 @@ document.addEventListener("DOMContentLoaded", () => {
         clickable: true,
       },
     });
+
+    updateCounter(
+      document.querySelector("#practical-list"),
+      ".instructors-swiper_counter"
+    );
   }
 
   document.getElementById("tab-teory").addEventListener("click", () => {
