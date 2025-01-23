@@ -173,7 +173,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const testimonialsToShow = 3;
   const loader = $(".loader__wrapper.is-single");
   const loader2 = $(".loader__wrapper.is-testimonial");
-  const empty = $(".testimonials_empty")
+  const empty = $(".testimonials_empty");
+  const charCount = document.getElementById("charCount");
+  const starsRadioElements = document.querySelectorAll(
+    ".testimonial-modal_rate-stars-radio"
+  );
+  const submitBtn = document.getElementById("Submit-Register");
 
   if (slug) {
     fetch(
@@ -249,9 +254,14 @@ document.addEventListener("DOMContentLoaded", () => {
               .then((data) => {
                 if (data.message) {
                   form.reset();
+                  charCount.textContent = "0/2048";
+                  starsRadioElements.forEach((element) => {
+                    element.classList.remove("is-active-starrating");
+                  });
+                  submitBtn.classList.add("is-disabled");
                   document
-                  .querySelector("#testimonial-modal")
-                  .classList.remove("visible");
+                    .querySelector("#testimonial-modal")
+                    .classList.remove("visible");
                   loader2.css("display", "none");
 
                   fetchTestimonials(cmsItemId, type);
@@ -497,10 +507,11 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="testimonials_slide swiper-slide">
         <div class="testimonials_testimonial">
             <div class="testimonial_head">
-                <div class="testimonial__name">${testimonial.firstName && testimonial.lastName
-          ? testimonial.firstName + " " + testimonial.lastName
-          : "Anonymous"
-        }</div>
+                <div class="testimonial__name">${
+                  testimonial.firstName && testimonial.lastName
+                    ? testimonial.firstName + " " + testimonial.lastName
+                    : "Anonymous"
+                }</div>
                 <div class="testimonial__stars w-embed">
                     ${testimonial.overallRatingSVG}
                 </div>
@@ -538,31 +549,35 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="testimonial_bottom">
                 <div class="testimonial_date">${new Date(
-          testimonial.createdAt
-        ).toLocaleDateString("uk-UA")}</div>
+                  testimonial.createdAt
+                ).toLocaleDateString("uk-UA")}</div>
                 <div class="testimonial_helpful">
                     <div class="testimonial_helpful-text">Чи був цей відгук корисним?</div>
-                    <div class="testimonial_helpful-item like" data-testimonial-id="${testimonial.testimonialId
-        }" data-user-id="${testimonial.userId}">
+                    <div class="testimonial_helpful-item like" data-testimonial-id="${
+                      testimonial.testimonialId
+                    }" data-user-id="${testimonial.userId}">
                         <div class="testimonial_like-icon w-embed">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M11.9303 4.0757L11.9303 4.07571L11.9324 4.07257C12.0559 3.8859 12.297 3.69614 12.6047 3.58739C12.908 3.48018 13.2306 3.46767 13.5098 3.57197L13.5174 3.57483L13.5252 3.57745C14.1796 3.7978 14.607 4.54792 14.4741 5.16818L14.4713 5.18124L14.4692 5.19442L14.0011 8.1379L14.0009 8.13788L13.9993 8.15034C13.9455 8.55333 14.0538 8.93478 14.2953 9.23314L14.3031 9.24274L14.3113 9.25194C14.555 9.52426 14.9135 9.69759 15.305 9.69759H19.0046C19.581 9.69759 20.0285 9.9279 20.28 10.2789C20.5133 10.6115 20.5766 11.0669 20.3963 11.5789L20.3962 11.5789L20.3929 11.589L18.1785 18.3311L18.1729 18.3483L18.1685 18.3658C17.9491 19.2434 16.9468 20.0124 15.9531 20.0124H12.4426C12.1917 20.0124 11.8776 19.9684 11.5865 19.8814C11.2851 19.7914 11.0684 19.6733 10.9598 19.5648L10.9373 19.5423L10.9122 19.5228L9.75997 18.6317L9.75999 18.6317L9.75537 18.6282C9.44175 18.3914 9.25195 18.0092 9.25195 17.605V8.45947C9.25195 8.19961 9.3299 7.94517 9.47351 7.72943C9.47368 7.72917 9.47385 7.72891 9.47403 7.72865L11.9303 4.0757Z" stroke="#555F7E" />
                                 <path d="M4.96232 7.20435H5.88947C6.54085 7.20435 6.87168 7.33385 7.04876 7.50274C7.21999 7.66605 7.35179 7.96696 7.35179 8.57665V17.6321C7.35179 18.2418 7.21999 18.5427 7.04876 18.706C6.87168 18.8749 6.54085 19.0044 5.88947 19.0044H4.96232C4.31094 19.0044 3.98012 18.8749 3.80303 18.706C3.63181 18.5427 3.5 18.2418 3.5 17.6321V8.57665C3.5 7.96696 3.63181 7.66605 3.80303 7.50274C3.98012 7.33385 4.31094 7.20435 4.96232 7.20435Z" stroke="#555F7E" />
                             </svg>
                         </div>
-                        <div class="testimonial_like-count">${testimonial.likes || 0
-        }</div>
+                        <div class="testimonial_like-count">${
+                          testimonial.likes || 0
+                        }</div>
                     </div>
-                    <div class="testimonial_helpful-item dislike" data-testimonial-id="${testimonial.testimonialId
-        }" data-user-id="${testimonial.userId}">
+                    <div class="testimonial_helpful-item dislike" data-testimonial-id="${
+                      testimonial.testimonialId
+                    }" data-user-id="${testimonial.userId}">
                         <div class="testimonial_dislike-icon w-embed">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12.0698 19.4364L12.0698 19.4364L12.0677 19.4396C11.9443 19.6262 11.7032 19.816 11.3955 19.9247C11.0922 20.0319 10.7696 20.0445 10.4904 19.9402L10.4828 19.9373L10.475 19.9347C9.82063 19.7143 9.39325 18.9642 9.52616 18.344L9.52896 18.3309L9.53105 18.3177L9.99912 15.3743L9.99928 15.3743L10.0009 15.3619C10.0547 14.9589 9.94645 14.5775 9.70492 14.2791L9.69715 14.2695L9.68892 14.2603C9.44526 13.988 9.0867 13.8146 8.69521 13.8146H4.99567C4.41934 13.8146 3.97178 13.5843 3.7203 13.2333C3.48705 12.9008 3.42372 12.4454 3.60401 11.9333L3.60412 11.9334L3.60743 11.9233L5.82175 5.18131L5.8274 5.16412L5.83179 5.14656C6.05118 4.269 7.05343 3.5 8.04711 3.5H11.5576C11.8085 3.5 12.1226 3.54406 12.4137 3.63099C12.7151 3.721 12.9318 3.83908 13.0403 3.94764L13.0628 3.97013L13.088 3.98959L14.2396 4.88033C14.2398 4.88041 14.2399 4.88049 14.24 4.88058C14.5613 5.12991 14.7482 5.50724 14.7482 5.90742V15.0528C14.7482 15.3126 14.6702 15.567 14.5266 15.7828C14.5264 15.783 14.5263 15.7833 14.5261 15.7836L12.0698 19.4364Z" stroke="#555F7E"></path>
                                 <path d="M19.0379 16.308H18.1107C17.4594 16.308 17.128 16.1785 16.9508 16.01C16.7799 15.8476 16.6484 15.549 16.6484 14.9447V5.88936C16.6484 5.27968 16.7802 4.97878 16.9515 4.81548C17.1285 4.64659 17.4594 4.51709 18.1107 4.51709H19.0379C19.6892 4.51709 20.02 4.64659 20.1971 4.81548C20.3683 4.97878 20.5001 5.27968 20.5001 5.88936V14.9357C20.5001 15.5454 20.3683 15.8463 20.1971 16.0096C20.02 16.1785 19.6892 16.308 19.0379 16.308Z" stroke="#555F7E"></path>
                             </svg>
                         </div>
-                        <div class="testimonial_dislike-count">${testimonial.dislikes || 0
-        }</div>
+                        <div class="testimonial_dislike-count">${
+                          testimonial.dislikes || 0
+                        }</div>
                     </div>
                 </div>
             </div>
@@ -798,7 +813,6 @@ document.addEventListener("DOMContentLoaded", () => {
         processingState.set(testimonialId, false); // Reset processing state
       });
   }
-
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -1052,11 +1066,13 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!groupChecked) {
           allValid = false;
         }
-      } else if (input.type === "checkbox") {
+      }
+      if (input.type === "checkbox") {
         if (!input.checked) {
           allValid = false;
         }
-      } else if (input.value.trim() === "") {
+      }
+      if (input.value.trim() === "") {
         allValid = false;
       }
     });
@@ -1146,7 +1162,7 @@ document.addEventListener("DOMContentLoaded", () => {
     phoneField.value = localStorage.getItem("uid") || "";
   }
 
-	const loader = $(".loader__wrapper.is-register");
+  const loader = $(".loader__wrapper.is-register");
   const serviceItems = document.querySelectorAll(".instructor_services-item");
   const registerModal = document.getElementById("registration-modal");
   const registerForm = document.getElementById("registration-form");
